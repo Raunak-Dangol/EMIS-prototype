@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NCCS Secondary School - Education Management Information System Login Portal">
+    <title>NCCS EMIS — Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="login-page">
+        <!-- Decorative orb bottom-left -->
+        <div style="position:absolute;bottom:-120px;left:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(107,33,168,0.2),transparent 70%);animation:float 7s ease-in-out infinite reverse;z-index:0;"></div>
+
+        <div class="login-card">
+            <div class="logo-container">
+                <!-- Inline SVG Logo (NCCS Purple) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 100 100" style="margin-bottom:12px;">
+                    <rect x="10" y="15" width="80" height="70" rx="8" fill="none" stroke="#6b21a8" stroke-width="3"/>
+                    <text x="50" y="58" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#6b21a8" text-anchor="middle">NCCS</text>
+                    <line x1="25" y1="68" x2="75" y2="68" stroke="#6b21a8" stroke-width="2"/>
+                    <circle cx="50" cy="30" r="4" fill="#6b21a8" opacity="0.6"/>
+                </svg>
+                <h1>NCCS EMIS</h1>
+                <p>Education Management Information System</p>
+            </div>
+
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                    <span class="input-icon">👤</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <span class="input-icon">🔒</span>
+                </div>
+
+                <div id="loginError" style="display:none;padding:10px 14px;margin-bottom:16px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;font-size:0.85rem;"></div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Sign In</span>
+                </button>
+            </form>
+
+            <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+                <p style="font-size:0.75rem;color:#9ca3af;">NCCS Secondary School &bull; Kathmandu, Nepal</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        // Check if already logged in
+        (async () => {
+            try {
+                const data = await api.checkSession();
+                if (data.authenticated) {
+                    redirectByRole(data.user.role);
+                }
+            } catch (e) { /* not logged in */ }
+        })();
+
+        function redirectByRole(role) {
+            if (role === 'admin') {
+                window.location.href = '/admin/dashboard';
+            } else {
+                window.location.href = '/student/dashboard';
+            }
+        }
+
+        // Login Form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                errorDiv.textContent = 'Please enter both username and password.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            btn.classList.add('loading');
+            errorDiv.style.display = 'none';
+
+            try {
+                const data = await api.login(username, password);
+                showToast('Login successful! Redirecting...', 'success');
+                setTimeout(() => redirectByRole(data.user.role), 500);
+            } catch (error) {
+                errorDiv.textContent = error.message || 'Invalid credentials. Please try again.';
+                errorDiv.style.display = 'block';
+                btn.classList.remove('loading');
+            }
+        });
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
