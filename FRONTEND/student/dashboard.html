@@ -28,10 +28,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">Main</div>
                 <div class="nav-item active" data-page="overview" onclick="switchPage('overview')">
-                    <span class="nav-icon">📊</span> Dashboard
-                </div>
-                <div class="nav-item" data-page="calendar" onclick="switchPage('calendar')">
-                    <span class="nav-icon">📅</span> Academic Calendar
+                    <span class="nav-icon">📅</span> Dashboard
                 </div>
                 <div class="nav-item" data-page="attendance" onclick="switchPage('attendance')">
                     <span class="nav-icon">📋</span> My Attendance
@@ -79,53 +76,7 @@
                         </div>
                     </div>
 
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon green">✅</div>
-                            <div class="stat-value" id="statAttRate">—</div>
-                            <div class="stat-label">Attendance Rate</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon purple">📅</div>
-                            <div class="stat-value" id="statPresent">—</div>
-                            <div class="stat-label">Days Present</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon red">❌</div>
-                            <div class="stat-value" id="statAbsent">—</div>
-                            <div class="stat-label">Days Absent</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon yellow">⏰</div>
-                            <div class="stat-value" id="statLate">—</div>
-                            <div class="stat-label">Days Late</div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Results -->
-                    <div class="data-panel">
-                        <div class="panel-header">
-                            <span class="panel-title">Recent Exam Results</span>
-                        </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Exam Type</th>
-                                    <th>Marks</th>
-                                    <th>Grade</th>
-                                    <th>Percentage</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentResultsBody">
-                                <tr><td colspan="5" class="empty-state"><div class="empty-icon">📝</div><p>No recent results</p></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- ===== PAGE: ACADEMIC CALENDAR ===== -->
-                <section id="page-calendar" style="display:none;">
+                    <!-- Academic Calendar (replaces stats + recent results per plan) -->
                     <div class="calendar-section">
                         <!-- Main Calendar -->
                         <div class="calendar-wrapper">
@@ -356,14 +307,12 @@
 
             const titles = {
                 overview: 'My Dashboard',
-                calendar: 'Academic Calendar',
                 attendance: 'My Attendance',
                 results: 'My Results',
                 profile: 'My Profile'
             };
             document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
 
-            if (page === 'calendar') renderCalendar();
             if (page === 'attendance') loadAttendanceHistory();
             if (page === 'results') loadAllResults();
             if (page === 'profile') loadProfile();
@@ -385,27 +334,8 @@
                 document.getElementById('welcomeMsg').textContent = `Welcome back, ${data.student.first_name}!`;
                 document.getElementById('welcomeSub').textContent = `Grade ${data.student.grade} • ${data.student.faculty} • Roll No: ${data.student.roll_no}`;
 
-                // Attendance stats
-                document.getElementById('statAttRate').textContent = data.attendance.rate + '%';
-                document.getElementById('statPresent').textContent = data.attendance.present;
-                document.getElementById('statAbsent').textContent = data.attendance.absent;
-                document.getElementById('statLate').textContent = data.attendance.late;
-
-                // Recent results
-                const tbody = document.getElementById('recentResultsBody');
-                if (data.recent_results.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-icon">📝</div><p>No recent results</p></td></tr>';
-                } else {
-                    tbody.innerHTML = data.recent_results.map(r => `
-                        <tr>
-                            <td>${r.subject_name || '—'}</td>
-                            <td>${r.exam_type}</td>
-                            <td>${r.marks_obtained} / ${r.full_marks}</td>
-                            <td><span class="badge ${r.grade_point === 'E' ? 'badge-absent' : 'badge-present'}">${r.grade_point || '—'}</span></td>
-                            <td>${r.percentage}%</td>
-                        </tr>
-                    `).join('');
-                }
+                // Render the academic calendar on the overview page
+                renderCalendar();
             } catch (e) {
                 showToast('Failed to load dashboard', 'error');
             }
