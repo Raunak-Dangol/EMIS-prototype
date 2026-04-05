@@ -17,7 +17,6 @@ class User(db.Model):
 
     # Relationships
     student_profile = db.relationship('Student', backref='user', uselist=False, cascade='all, delete-orphan')
-    teacher_profile = db.relationship('Teacher', backref='user', uselist=False, cascade='all, delete-orphan')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -83,11 +82,10 @@ class Student(db.Model):
 
 
 class Teacher(db.Model):
-    """Teacher profile linked to a User account."""
+    """Teacher profile (Administrative record completely separate from User logins)."""
     __tablename__ = 'teachers'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
@@ -105,8 +103,6 @@ class Teacher(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'user_id': self.user_id,
-            'username': self.user.username if self.user else None,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'full_name': self.full_name,

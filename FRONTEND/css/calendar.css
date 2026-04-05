@@ -1,32 +1,40 @@
 /* ============================================================
-   NCCS EMIS — Academic Calendar Stylesheet
-   Separate CSS for the Student Dashboard Calendar Component
+   NCCS EMIS — FullCalendar Theme Overrides
+   Matches the White + NCCS Purple design system
    ============================================================ */
 
-/* ----- Calendar Wrapper ----- */
-.calendar-section {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 24px;
-    animation: calFadeIn 0.5s var(--ease-out) both;
+/* ----- FullCalendar CSS Variable Overrides ----- */
+:root {
+    --fc-border-color: var(--border);
+    --fc-button-bg-color: var(--primary-600);
+    --fc-button-border-color: var(--primary-700);
+    --fc-button-hover-bg-color: var(--primary-700);
+    --fc-button-hover-border-color: var(--primary-800);
+    --fc-button-active-bg-color: var(--primary-800);
+    --fc-button-active-border-color: var(--primary-900);
+    --fc-today-bg-color: rgba(124, 45, 245, 0.08);
+    --fc-page-bg-color: var(--card-bg);
+    --fc-neutral-bg-color: var(--bg-tertiary);
+    --fc-list-event-hover-bg-color: var(--primary-50);
+    --fc-highlight-color: rgba(124, 45, 245, 0.12);
+    --fc-non-business-color: rgba(0, 0, 0, 0.02);
+    --fc-event-border-color: transparent;
+    --fc-small-font-size: 0.78rem;
 }
 
-@keyframes calFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.calendar-wrapper {
+/* ----- Calendar Container ----- */
+.fc-calendar-container {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--card-shadow);
     overflow: hidden;
     position: relative;
+    padding: 16px 20px 20px;
 }
 
 /* Decorative top gradient bar */
-.calendar-wrapper::before {
+.fc-calendar-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -43,585 +51,272 @@
     50%      { background-position: 100% 50%; }
 }
 
-/* ----- Calendar Header ----- */
-.calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px 16px;
+/* ----- Layout: Calendar ----- */
+.calendar-section {
+    display: block;
+    animation: calFadeIn 0.5s var(--ease-out) both;
 }
 
-.calendar-header .cal-title {
-    font-size: 1.25rem;
+@keyframes calFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----- Toolbar Overrides ----- */
+.fc .fc-toolbar {
+    margin-bottom: 16px !important;
+}
+
+.fc .fc-toolbar-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem !important;
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
-.calendar-header .cal-title .cal-year {
-    font-weight: 400;
-    color: var(--text-muted);
-    font-size: 1rem;
-}
-
-.calendar-nav {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.calendar-nav .cal-nav-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    transition: all 0.25s var(--ease-out);
-}
-
-.calendar-nav .cal-nav-btn:hover {
-    background: var(--primary-50);
-    border-color: var(--primary-300);
-    color: var(--primary-700);
-    transform: scale(1.08);
-}
-
-.calendar-nav .cal-nav-btn:active {
-    transform: scale(0.95);
-}
-
-.calendar-nav .cal-today-btn {
-    padding: 6px 14px;
-    border-radius: 100px;
-    border: 1px solid var(--primary-200);
-    background: var(--primary-50);
-    color: var(--primary-700);
-    font-family: inherit;
-    font-size: 0.78rem;
+.fc .fc-button {
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s var(--ease-out);
-    letter-spacing: 0.02em;
+    font-size: 0.82rem;
+    border-radius: var(--radius-sm) !important;
+    padding: 6px 14px;
+    margin-left: 6px;
+    text-transform: capitalize;
+    box-shadow: none !important;
+    transition: all 0.2s var(--ease-out);
 }
 
-.calendar-nav .cal-today-btn:hover {
-    background: var(--primary-100);
-    border-color: var(--primary-400);
-    box-shadow: var(--shadow-purple);
+.fc .fc-button-group > .fc-button:not(:first-child) {
+    margin-left: 6px !important;
 }
 
-/* ----- Day Name Headers ----- */
-.calendar-day-names {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 0 16px;
-    margin-bottom: 4px;
+.fc .fc-button:focus {
+    box-shadow: 0 0 0 3px var(--accent-glow) !important;
 }
 
-.calendar-day-name {
-    text-align: center;
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background: var(--primary-800);
+    border-color: var(--primary-900);
+}
+
+/* Today button special style */
+.fc .fc-today-button {
+    background: var(--primary-50) !important;
+    color: var(--primary-700) !important;
+    border: 1px solid var(--primary-200) !important;
+    font-weight: 600;
+}
+
+.fc .fc-today-button:hover {
+    background: var(--primary-100) !important;
+    border-color: var(--primary-400) !important;
+    box-shadow: var(--shadow-purple) !important;
+}
+
+.fc .fc-today-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* ----- Day Header (Sun, Mon, Tue...) ----- */
+.fc .fc-col-header-cell {
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+}
+
+.fc .fc-col-header-cell-cushion {
+    font-family: 'Inter', sans-serif;
     font-size: 0.72rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    padding: 8px 0;
+    padding: 10px 4px;
+    text-decoration: none !important;
 }
 
-.calendar-day-name.weekend {
+/* Weekend/Saturday header highlight */
+.fc .fc-day-sat .fc-col-header-cell-cushion {
     color: var(--danger);
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
-/* ----- Calendar Grid ----- */
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    padding: 0 16px 20px;
+/* ----- Day Cells ----- */
+.fc .fc-daygrid-day {
+    transition: background 0.2s var(--ease-out);
+    min-height: 80px;
 }
 
-/* ----- Individual Day Cell ----- */
-.calendar-day {
-    position: relative;
-    min-height: 68px;
-    padding: 6px;
-    border-radius: var(--radius-sm);
-    cursor: default;
-    transition: all 0.2s var(--ease-out);
-    border: 1px solid transparent;
-}
-
-.calendar-day:hover {
+.fc .fc-daygrid-day:hover {
     background: var(--surface-hover);
-    border-color: var(--border);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
 }
 
-.calendar-day.other-month {
-    opacity: 0.3;
-    pointer-events: none;
+/* Red background for Saturdays and Holidays */
+.fc .fc-day-sat,
+.fc .fc-day.holiday-cell {
+    background: var(--danger-bg) !important;
 }
 
-.calendar-day .day-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+.fc .fc-daygrid-day-number {
+    font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 4px;
-    transition: all 0.2s;
+    padding: 6px 8px;
+    text-decoration: none !important;
 }
 
-.calendar-day.today .day-number {
+/* Today cell */
+.fc .fc-day-today {
+    background: var(--fc-today-bg-color) !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
     background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
-    color: #ffffff;
+    color: #ffffff !important;
     font-weight: 700;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px;
     box-shadow: 0 2px 8px rgba(124, 45, 245, 0.35);
-    animation: todayPulse 2s ease-in-out infinite;
 }
 
-@keyframes todayPulse {
-    0%, 100% { box-shadow: 0 2px 8px rgba(124, 45, 245, 0.35); }
-    50%      { box-shadow: 0 2px 16px rgba(124, 45, 245, 0.5); }
-}
-
-.calendar-day.weekend .day-number {
+/* Weekend/Saturday day numbers */
+.fc .fc-day-sat .fc-daygrid-day-number {
     color: var(--danger);
     opacity: 0.8;
 }
 
-.calendar-day.has-event {
-    cursor: pointer;
+/* Other month days */
+.fc .fc-day-other .fc-daygrid-day-number {
+    opacity: 0.3;
 }
 
-.calendar-day.has-event:hover {
-    background: var(--primary-50);
-    border-color: var(--primary-200);
-}
-
-/* ----- Event Dots (small indicators under the date number) ----- */
-.event-dots {
-    display: flex;
-    gap: 3px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 2px;
-}
-
-.event-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    animation: dotAppear 0.3s var(--ease-out) both;
-}
-
-@keyframes dotAppear {
-    from { transform: scale(0); }
-    to   { transform: scale(1); }
-}
-
-.event-dot.exam       { background: var(--primary-500); }
-.event-dot.holiday    { background: var(--danger); }
-.event-dot.result     { background: var(--success); }
-.event-dot.event      { background: var(--info); }
-.event-dot.deadline   { background: var(--warning); }
-
-/* ----- Event Badges (on the day cell) ----- */
-.event-badge {
-    display: block;
-    font-size: 0.62rem;
-    font-weight: 600;
-    padding: 1px 5px;
+/* ----- Events ----- */
+.fc .fc-daygrid-event {
     border-radius: 4px;
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    line-height: 1.4;
-    animation: badgeFadeIn 0.35s var(--ease-out) both;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    margin: 1px 3px;
+    border: none !important;
+    cursor: default;
+    transition: transform 0.15s var(--ease-out), box-shadow 0.15s;
 }
 
-@keyframes badgeFadeIn {
-    from { opacity: 0; transform: translateX(-4px); }
-    to   { opacity: 1; transform: translateX(0); }
+.fc .fc-daygrid-event:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
 }
 
-.event-badge.exam {
-    background: var(--primary-100);
-    color: var(--primary-700);
+.fc .fc-daygrid-dot-event {
+    padding: 2px 4px;
 }
 
-.event-badge.holiday {
-    background: var(--danger-bg);
-    color: var(--danger);
+.fc .fc-daygrid-dot-event .fc-event-title {
+    font-weight: 600;
 }
 
-.event-badge.result {
-    background: var(--success-bg);
-    color: var(--success);
+/* Force inner text elements to inherit our custom text colors instead of FullCalendar's default white */
+.fc-event .fc-event-main,
+.fc-event .fc-event-title,
+.fc-event .fc-event-time {
+    color: inherit !important;
 }
 
-.event-badge.event {
-    background: var(--info-bg);
-    color: var(--info);
+/* Event color classes (applied via classNames in config) */
+.fc-event.event-exam {
+    background: var(--primary-100) !important;
+    color: var(--primary-700) !important;
+    border-left: 3px solid var(--primary-500) !important;
 }
 
-.event-badge.deadline {
-    background: var(--warning-bg);
-    color: var(--warning);
+.fc-event.event-holiday {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    border-left: 3px solid var(--danger) !important;
 }
 
-/* ----- Tooltip (on day hover / click) ----- */
-.cal-tooltip {
-    position: fixed;
-    z-index: 500;
-    min-width: 220px;
-    max-width: 280px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+.fc-event.event-result {
+    background: var(--success-bg) !important;
+    color: var(--success) !important;
+    border-left: 3px solid var(--success) !important;
+}
+
+.fc-event.event-event {
+    background: var(--info-bg) !important;
+    color: var(--info) !important;
+    border-left: 3px solid var(--info) !important;
+}
+
+.fc-event.event-deadline {
+    background: var(--warning-bg) !important;
+    color: var(--warning) !important;
+    border-left: 3px solid var(--warning) !important;
+}
+
+/* More events link */
+.fc .fc-daygrid-more-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary-600);
+    padding: 2px 4px;
+}
+
+.fc .fc-daygrid-more-link:hover {
+    color: var(--primary-800);
+    background: var(--primary-50);
+    border-radius: 4px;
+}
+
+/* ----- Popover (more events popup) ----- */
+.fc .fc-popover {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
-    padding: 14px 16px;
-    pointer-events: none;
-    opacity: 0;
-    transform: translateY(6px);
-    transition: all 0.2s var(--ease-out);
-}
-
-.cal-tooltip.visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-.cal-tooltip .tooltip-date {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-}
-
-.cal-tooltip .tooltip-event {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 6px 0;
-}
-
-.cal-tooltip .tooltip-event + .tooltip-event {
-    border-top: 1px dashed var(--border);
-}
-
-.cal-tooltip .tooltip-event-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-top: 4px;
-    flex-shrink: 0;
-}
-
-.cal-tooltip .tooltip-event-info {
-    flex: 1;
-}
-
-.cal-tooltip .tooltip-event-title {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.3;
-}
-
-.cal-tooltip .tooltip-event-type {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: capitalize;
-    margin-top: 1px;
-}
-
-/* ============================================================
-   SIDEBAR — Events Panel
-   ============================================================ */
-
-.calendar-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Upcoming Events Card */
-.events-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
     overflow: hidden;
 }
 
-.events-card .events-card-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
+.fc .fc-popover-header {
     background: var(--bg-tertiary);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.events-card .events-card-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.events-card .events-card-count {
-    font-size: 0.7rem;
-    font-weight: 700;
-    background: var(--primary-100);
-    color: var(--primary-700);
-    padding: 2px 8px;
-    border-radius: 100px;
-}
-
-.events-list {
-    padding: 8px 12px;
-    max-height: 360px;
-    overflow-y: auto;
-}
-
-.events-list::-webkit-scrollbar { width: 4px; }
-.events-list::-webkit-scrollbar-thumb { background: var(--primary-200); border-radius: 2px; }
-
-.event-list-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 8px;
-    border-radius: var(--radius-sm);
-    transition: background 0.2s;
-    cursor: default;
-}
-
-.event-list-item:not(:last-child) {
-    border-bottom: 1px solid var(--border);
-}
-
-.event-list-item:hover {
-    background: var(--surface-hover);
-}
-
-.event-list-item .event-date-badge {
-    min-width: 44px;
-    text-align: center;
-    border-radius: var(--radius-sm);
-    padding: 6px 8px;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border);
-}
-
-.event-list-item .event-date-badge .event-day {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    line-height: 1;
-}
-
-.event-list-item .event-date-badge .event-month-short {
-    font-size: 0.6rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.event-list-item .event-details {
-    flex: 1;
-    min-width: 0;
-}
-
-.event-list-item .event-name {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.3;
-    margin-bottom: 2px;
-}
-
-.event-list-item .event-type-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.event-type-label.exam     { background: var(--primary-100); color: var(--primary-700); }
-.event-type-label.holiday  { background: var(--danger-bg); color: var(--danger); }
-.event-type-label.result   { background: var(--success-bg); color: var(--success); }
-.event-type-label.event    { background: var(--info-bg); color: var(--info); }
-.event-type-label.deadline { background: var(--warning-bg); color: var(--warning); }
-
-/* ============================================================
-   LEGEND
-   ============================================================ */
-
-.calendar-legend {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--card-shadow);
-    padding: 16px 20px;
-}
-
-.calendar-legend .legend-title {
+    font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    padding: 10px 14px;
 }
 
-.legend-items {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.fc .fc-popover-body {
+    padding: 8px;
 }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-}
 
-.legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.legend-dot.exam       { background: var(--primary-500); }
-.legend-dot.holiday    { background: var(--danger); }
-.legend-dot.result     { background: var(--success); }
-.legend-dot.event      { background: var(--info); }
-.legend-dot.deadline   { background: var(--warning); }
-
-/* ============================================================
-   MONTH TRANSITION ANIMATION
-   ============================================================ */
-
-.calendar-grid.slide-left {
-    animation: slideLeft 0.3s var(--ease-out);
-}
-
-.calendar-grid.slide-right {
-    animation: slideRight 0.3s var(--ease-out);
-}
-
-@keyframes slideLeft {
-    from { opacity: 0; transform: translateX(24px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideRight {
-    from { opacity: 0; transform: translateX(-24px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 
-@media (max-width: 1024px) {
-    .calendar-section {
-        grid-template-columns: 1fr;
-    }
 
-    .calendar-sidebar {
-        flex-direction: row;
-        gap: 16px;
-    }
-
-    .calendar-sidebar > * {
-        flex: 1;
-    }
-}
 
 @media (max-width: 768px) {
-    .calendar-header {
+    .fc-calendar-container {
+        padding: 10px 12px 14px;
+    }
+
+    .fc .fc-toolbar {
         flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
+        gap: 8px;
     }
 
-    .calendar-nav {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .calendar-day {
-        min-height: 52px;
-        padding: 4px;
-    }
-
-    .calendar-day .day-number {
-        width: 24px;
-        height: 24px;
-        font-size: 0.75rem;
-    }
-
-    .event-badge {
-        font-size: 0.55rem;
-        padding: 1px 3px;
-    }
-
-    .calendar-sidebar {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .calendar-grid {
-        padding: 0 8px 12px;
-    }
-
-    .calendar-day-names {
-        padding: 0 8px;
-    }
-
-    .calendar-day {
-        min-height: 44px;
-    }
-
-    .event-badge {
-        display: none;
+    .fc .fc-toolbar-title {
+        font-size: 1.1rem !important;
     }
 }

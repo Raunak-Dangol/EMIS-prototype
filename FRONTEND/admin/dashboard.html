@@ -27,24 +27,24 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">Main</div>
                 <div class="nav-item active" data-page="overview" onclick="switchPage('overview')">
-                    <span class="nav-icon">📊</span> Dashboard
+                    <span class="nav-icon"></span> Dashboard
                 </div>
                 <div class="nav-item" data-page="students" onclick="switchPage('students')">
-                    <span class="nav-icon">🎓</span> Students
+                    <span class="nav-icon"></span> Students
                 </div>
                 <div class="nav-item" data-page="teachers" onclick="switchPage('teachers')">
-                    <span class="nav-icon">👨‍🏫</span> Teachers
+                    <span class="nav-icon"></span> Teachers
                 </div>
 
                 <div class="nav-section">Academic</div>
                 <div class="nav-item" data-page="attendance" onclick="switchPage('attendance')">
-                    <span class="nav-icon">📋</span> Attendance
+                    <span class="nav-icon"></span> Attendance
                 </div>
                 <div class="nav-item" data-page="results" onclick="switchPage('results')">
-                    <span class="nav-icon">📝</span> Marks Entry
+                    <span class="nav-icon"></span> Marks Entry
                 </div>
                 <div class="nav-item" data-page="subjects" onclick="switchPage('subjects')">
-                    <span class="nav-icon">📚</span> Subjects
+                    <span class="nav-icon"></span> Subjects
                 </div>
             </nav>
 
@@ -55,7 +55,7 @@
                         <div class="user-name" id="userName">Admin</div>
                         <div class="user-role">Administrator</div>
                     </div>
-                    <button onclick="handleLogout()" title="Logout" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:1.2rem;padding:4px;">🚪</button>
+                    <button onclick="handleLogout()" title="Logout" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:1.2rem;padding:4px;">➜]</button>
                 </div>
             </div>
         </aside>
@@ -64,7 +64,7 @@
         <main class="main-content">
             <header class="topbar">
                 <div style="display:flex;align-items:center;gap:12px;">
-                    <button class="btn btn-secondary btn-sm" onclick="toggleSidebar()" style="display:none;" id="menuToggle">☰</button>
+                    <button class="btn btn-secondary btn-sm" onclick="toggleSidebar()" style="display:none;" id="menuToggle"></button>
                     <h2 class="page-title" id="pageTitle">Dashboard Overview</h2>
                 </div>
                 <div class="topbar-actions">
@@ -77,27 +77,27 @@
                 <section id="page-overview">
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-icon purple">🎓</div>
+                            <div class="stat-icon purple"></div>
                             <div class="stat-value" id="statTotalStudents">—</div>
                             <div class="stat-label">Total Students</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon blue">👨‍🏫</div>
+                            <div class="stat-icon blue"></div>
                             <div class="stat-value" id="statTotalTeachers">—</div>
                             <div class="stat-label">Total Teachers</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon green">✅</div>
+                            <div class="stat-icon green"></div>
                             <div class="stat-value" id="statAttendanceRate">—</div>
                             <div class="stat-label">Today's Attendance</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon yellow">📖</div>
+                            <div class="stat-icon yellow"></div>
                             <div class="stat-value" id="statGrade11">—</div>
                             <div class="stat-label">Grade 11</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon blue">📖</div>
+                            <div class="stat-icon blue"></div>
                             <div class="stat-value" id="statGrade12">—</div>
                             <div class="stat-label">Grade 12</div>
                         </div>
@@ -105,17 +105,17 @@
 
                     <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                         <div class="stat-card">
-                            <div class="stat-icon blue">🔬</div>
+                            <div class="stat-icon blue"></div>
                             <div class="stat-value" id="statScience">—</div>
                             <div class="stat-label">Science</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon purple">💼</div>
+                            <div class="stat-icon purple"></div>
                             <div class="stat-value" id="statManagement">—</div>
                             <div class="stat-label">Management</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon green">📜</div>
+                            <div class="stat-icon green"></div>
                             <div class="stat-value" id="statHumanities">—</div>
                             <div class="stat-label">Humanities</div>
                         </div>
@@ -157,7 +157,7 @@
                                 </tr>
                             </thead>
                             <tbody id="studentsTableBody">
-                                <tr><td colspan="6" class="empty-state"><div class="empty-icon">🎓</div><p>No students found</p></td></tr>
+                                <tr><td colspan="6" class="empty-state"><div class="empty-icon"></div><p>No students found</p></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -179,7 +179,6 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Username</th>
                                     <th>Department</th>
                                     <th>Phone</th>
                                     <th>Subjects</th>
@@ -187,7 +186,7 @@
                                 </tr>
                             </thead>
                             <tbody id="teachersTableBody">
-                                <tr><td colspan="6" class="empty-state"><div class="empty-icon">👨‍🏫</div><p>No teachers found</p></td></tr>
+                                <tr><td colspan="6" class="empty-state"><div class="empty-icon"></div><p>No teachers found</p></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -208,7 +207,7 @@
                             <option value="Management">Management</option>
                             <option value="Humanities">Humanities</option>
                         </select>
-                        <button class="btn btn-primary btn-sm" id="saveAttendanceBtn" onclick="saveAttendance()">💾 Save Attendance</button>
+                        <button class="btn btn-primary btn-sm" id="saveAttendanceBtn" onclick="saveAttendance()"> Save Attendance</button>
                     </div>
 
                     <div class="data-panel">
@@ -220,7 +219,7 @@
                             </div>
                         </div>
                         <div class="attendance-grid" id="attendanceGrid" style="padding:20px;">
-                            <div class="empty-state"><div class="empty-icon">📋</div><p>Select a date and grade to mark attendance</p></div>
+                            <div class="empty-state"><div class="empty-icon"></div><p>Select a date and grade to mark attendance</p></div>
                         </div>
                     </div>
                 </section>
@@ -256,7 +255,7 @@
                             <span class="panel-title">Bulk Marks Entry</span>
                             <div class="panel-actions">
                                 <span style="font-size:0.8rem;color:var(--text-muted);" id="marksInfo"></span>
-                                <button class="btn btn-primary btn-sm" onclick="saveBulkMarks()">💾 Save All Marks</button>
+                                <button class="btn btn-primary btn-sm" onclick="saveBulkMarks()"> Save All Marks</button>
                             </div>
                         </div>
                         <div id="marksGridContainer">
@@ -273,7 +272,7 @@
                                 <tbody id="marksGridBody"></tbody>
                             </table>
                             <div class="empty-state" id="marksEmptyState">
-                                <div class="empty-icon">📝</div>
+                                <div class="empty-icon"></div>
                                 <p>Select Grade, Faculty, Subject and Exam Type to enter marks</p>
                             </div>
                         </div>
@@ -316,7 +315,7 @@
                                 </tr>
                             </thead>
                             <tbody id="subjectsTableBody">
-                                <tr><td colspan="7" class="empty-state"><div class="empty-icon">📚</div><p>No subjects found</p></td></tr>
+                                <tr><td colspan="7" class="empty-state"><div class="empty-icon"></div><p>No subjects found</p></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -372,8 +371,6 @@
                     <div class="form-grid">
                         <div class="form-group"><label for="tfFirstName">First Name *</label><input type="text" id="tfFirstName" required></div>
                         <div class="form-group"><label for="tfLastName">Last Name *</label><input type="text" id="tfLastName" required></div>
-                        <div class="form-group"><label for="tfUsername">Username *</label><input type="text" id="tfUsername" required></div>
-                        <div class="form-group"><label for="tfPassword">Password *</label><input type="password" id="tfPassword"></div>
                         <div class="form-group"><label for="tfPhone">Phone</label><input type="text" id="tfPhone"></div>
                         <div class="form-group"><label for="tfDepartment">Department</label><input type="text" id="tfDepartment" placeholder="e.g. Science"></div>
                         <div class="form-group full-width"><label for="tfQualification">Qualification</label><input type="text" id="tfQualification" placeholder="e.g. M.Sc. Physics"></div>
@@ -525,13 +522,13 @@
                 const students = await api.getStudents(params);
                 document.getElementById('studentCount').textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
                 const tbody = document.getElementById('studentsTableBody');
-                if (students.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon">🎓</div><p>No students found</p></td></tr>'; return; }
+                if (students.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon"></div><p>No students found</p></td></tr>'; return; }
                 tbody.innerHTML = students.map(s => `<tr>
                     <td><strong>${s.roll_no}</strong></td><td>${s.full_name}</td>
                     <td><span class="badge badge-grade-${s.grade}">Grade ${s.grade}</span></td>
                     <td><span class="badge badge-${s.faculty.toLowerCase()}">${s.faculty}</span></td>
                     <td>${s.phone || '—'}</td>
-                    <td class="row-actions"><button onclick="editStudent(${s.id})" title="Edit">✏️</button><button class="delete" onclick="deleteStudent(${s.id}, '${s.full_name}')" title="Delete">🗑️</button></td>
+                    <td class="row-actions"><button onclick="editStudent(${s.id})" title="Edit">Edit</button><button class="delete" onclick="deleteStudent(${s.id}, '${s.full_name}')" title="Delete">Delete</button></td>
                 </tr>`).join('');
             } catch (e) { showToast('Failed to load students', 'error'); }
         }
@@ -587,22 +584,19 @@
                 allTeachers = await api.getTeachers();
                 document.getElementById('teacherCount').textContent = `${allTeachers.length} teacher${allTeachers.length !== 1 ? 's' : ''}`;
                 const tbody = document.getElementById('teachersTableBody');
-                if (allTeachers.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon">👨‍🏫</div><p>No teachers found. Add your first teacher!</p></td></tr>'; return; }
+                if (allTeachers.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon"></div><p>No teachers found. Add your first teacher!</p></td></tr>'; return; }
                 tbody.innerHTML = allTeachers.map(t => `<tr>
                     <td><strong>${t.full_name}</strong></td>
-                    <td>${t.username}</td>
                     <td>${t.department || '—'}</td>
                     <td>${t.phone || '—'}</td>
                     <td><span class="badge badge-management">${t.subject_count} subjects</span></td>
-                    <td class="row-actions"><button onclick="editTeacher(${t.id})" title="Edit">✏️</button><button class="delete" onclick="deleteTeacher(${t.id}, '${t.full_name}')" title="Delete">🗑️</button></td>
+                    <td class="row-actions"><button onclick="editTeacher(${t.id})" title="Edit">Edit</button><button class="delete" onclick="deleteTeacher(${t.id}, '${t.full_name}')" title="Delete">Delete</button></td>
                 </tr>`).join('');
             } catch (e) { showToast('Failed to load teachers', 'error'); }
         }
 
         function openTeacherModal(edit = false) {
             document.getElementById('teacherModalTitle').textContent = edit ? 'Edit Teacher' : 'Add New Teacher';
-            document.getElementById('tfPassword').required = !edit;
-            document.getElementById('tfUsername').disabled = edit;
             if (!edit) { document.getElementById('teacherForm').reset(); document.getElementById('editTeacherId').value = ''; }
             openModal('teacherModal');
         }
@@ -613,21 +607,19 @@
                 document.getElementById('editTeacherId').value = id;
                 document.getElementById('tfFirstName').value = t.first_name;
                 document.getElementById('tfLastName').value = t.last_name;
-                document.getElementById('tfUsername').value = t.username || '';
                 document.getElementById('tfPhone').value = t.phone || '';
                 document.getElementById('tfDepartment').value = t.department || '';
                 document.getElementById('tfQualification').value = t.qualification || '';
-                document.getElementById('tfPassword').value = '';
                 openTeacherModal(true);
             } catch (e) { showToast('Failed to load teacher', 'error'); }
         }
 
         async function submitTeacher() {
             const id = document.getElementById('editTeacherId').value;
-            const data = { first_name:document.getElementById('tfFirstName').value, last_name:document.getElementById('tfLastName').value, username:document.getElementById('tfUsername').value, password:document.getElementById('tfPassword').value, phone:document.getElementById('tfPhone').value, department:document.getElementById('tfDepartment').value, qualification:document.getElementById('tfQualification').value };
+            const data = { first_name:document.getElementById('tfFirstName').value, last_name:document.getElementById('tfLastName').value, phone:document.getElementById('tfPhone').value, department:document.getElementById('tfDepartment').value, qualification:document.getElementById('tfQualification').value };
             try {
                 if (id) { await api.updateTeacher(id, data); showToast('Teacher updated', 'success'); }
-                else { if (!data.password) { showToast('Password required', 'error'); return; } await api.createTeacher(data); showToast('Teacher created', 'success'); }
+                else { await api.createTeacher(data); showToast('Teacher created', 'success'); }
                 closeModal('teacherModal'); loadTeachers();
             } catch (e) { showToast(e.message || 'Failed to save', 'error'); }
         }
@@ -644,7 +636,7 @@
             const grade = document.getElementById('attendanceGrade').value;
             const faculty = document.getElementById('attendanceFaculty').value;
             const attDate = document.getElementById('attendanceDate').value;
-            if (!grade) { document.getElementById('attendanceGrid').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Select a grade to mark attendance</p></div>'; return; }
+            if (!grade) { document.getElementById('attendanceGrid').innerHTML = '<div class="empty-state"><div class="empty-icon"></div><p>Select a grade to mark attendance</p></div>'; return; }
             try {
                 const params = { grade }; if (faculty) params.faculty = faculty;
                 const students = await api.getStudents(params);
@@ -652,7 +644,7 @@
                 if (attDate) { const records = await api.getAttendance({ date: attDate, grade }); records.forEach(r => { existingAtt[r.student_id] = r.status; }); }
                 attendanceData = {};
                 const grid = document.getElementById('attendanceGrid');
-                if (students.length === 0) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🎓</div><p>No students</p></div>'; return; }
+                if (students.length === 0) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon"></div><p>No students</p></div>'; return; }
                 grid.innerHTML = students.map(s => {
                     const status = existingAtt[s.id] || 'Present'; attendanceData[s.id] = status;
                     return `<div class="attendance-item" id="att-${s.id}"><div class="student-info"><div><strong>${s.full_name}</strong><div class="student-roll">${s.roll_no} • ${s.faculty}</div></div></div><div class="status-toggle"><button class="status-btn ${status==='Present'?'active-present':''}" onclick="setStatus(${s.id},'Present')">P</button><button class="status-btn ${status==='Late'?'active-late':''}" onclick="setStatus(${s.id},'Late')">L</button><button class="status-btn ${status==='Absent'?'active-absent':''}" onclick="setStatus(${s.id},'Absent')">A</button></div></div>`;
@@ -802,7 +794,7 @@
                 const subjects = await api.getSubjects(params);
                 document.getElementById('subjectCount').textContent = `${subjects.length} subject${subjects.length !== 1 ? 's' : ''}`;
                 const tbody = document.getElementById('subjectsTableBody');
-                if (subjects.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon">📚</div><p>No subjects found</p></td></tr>'; return; }
+                if (subjects.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon"></div><p>No subjects found</p></td></tr>'; return; }
                 tbody.innerHTML = subjects.map(s => `<tr>
                     <td><strong>${s.code}</strong></td><td>${s.name}</td>
                     <td><span class="badge badge-grade-${s.grade}">Grade ${s.grade}</span></td>
@@ -810,8 +802,8 @@
                     <td>${s.teacher_name ? `<span style="color:var(--primary-700);font-weight:500;">${s.teacher_name}</span>` : `<button class="btn btn-secondary btn-sm" onclick="openAssignTeacher(${s.id}, '${s.name} (${s.code})')">Assign</button>`}</td>
                     <td>${s.full_marks} / ${s.pass_marks}</td>
                     <td class="row-actions">
-                        ${s.teacher_name ? `<button onclick="openAssignTeacher(${s.id}, '${s.name} (${s.code})')" title="Reassign Teacher">👨‍🏫</button>` : ''}
-                        <button class="delete" onclick="deleteSubject(${s.id}, '${s.name}')" title="Delete">🗑️</button>
+                        ${s.teacher_name ? `<button onclick="openAssignTeacher(${s.id}, '${s.name} (${s.code})')" title="Reassign Teacher">Reassign</button>` : ''}
+                        <button class="delete" onclick="deleteSubject(${s.id}, '${s.name}')" title="Delete">Delete</button>
                     </td>
                 </tr>`).join('');
             } catch (e) { showToast('Failed to load subjects', 'error'); }
@@ -873,7 +865,7 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            const icon = type === 'success' ? '' : type === 'error' ? '' : '';
             toast.innerHTML = `<span>${icon}</span> ${message}`;
             container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);

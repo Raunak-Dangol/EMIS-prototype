@@ -7,6 +7,7 @@
     <title>NCCS EMIS — Student Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/calendar.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -31,10 +32,10 @@
                     <span class="nav-icon">📅</span> Dashboard
                 </div>
                 <div class="nav-item" data-page="attendance" onclick="switchPage('attendance')">
-                    <span class="nav-icon">📋</span> My Attendance
+                    <span class="nav-icon"></span> My Attendance
                 </div>
                 <div class="nav-item" data-page="results" onclick="switchPage('results')">
-                    <span class="nav-icon">📝</span> My Results
+                    <span class="nav-icon"></span> My Results
                 </div>
                 <div class="nav-item" data-page="profile" onclick="switchPage('profile')">
                     <span class="nav-icon">👤</span> My Profile
@@ -48,7 +49,7 @@
                         <div class="user-name" id="userName">Student</div>
                         <div class="user-role">Student</div>
                     </div>
-                    <button onclick="handleLogout()" title="Logout" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:1.2rem;padding:4px;">🚪</button>
+                    <button onclick="handleLogout()" title="Logout" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:1.2rem;padding:4px;">➜]</button>
                 </div>
             </div>
         </aside>
@@ -76,69 +77,20 @@
                         </div>
                     </div>
 
-                    <!-- Academic Calendar (replaces stats + recent results per plan) -->
+                    <!-- Academic Calendar (FullCalendar) -->
                     <div class="calendar-section">
                         <!-- Main Calendar -->
-                        <div class="calendar-wrapper">
-                            <div class="calendar-header">
-                                <div class="cal-title">
-                                    <span id="calMonthName">April</span>
-                                    <span class="cal-year" id="calYear">2026</span>
-                                </div>
-                                <div class="calendar-nav">
-                                    <button class="cal-nav-btn" onclick="changeMonth(-1)" title="Previous Month">◀</button>
-                                    <button class="cal-today-btn" onclick="goToToday()">Today</button>
-                                    <button class="cal-nav-btn" onclick="changeMonth(1)" title="Next Month">▶</button>
-                                </div>
-                            </div>
-                            <div class="calendar-day-names">
-                                <div class="calendar-day-name weekend">Sun</div>
-                                <div class="calendar-day-name">Mon</div>
-                                <div class="calendar-day-name">Tue</div>
-                                <div class="calendar-day-name">Wed</div>
-                                <div class="calendar-day-name">Thu</div>
-                                <div class="calendar-day-name">Fri</div>
-                                <div class="calendar-day-name weekend">Sat</div>
-                            </div>
-                            <div class="calendar-grid" id="calendarGrid"></div>
-                        </div>
-
-                        <!-- Sidebar -->
-                        <div class="calendar-sidebar">
-                            <!-- Upcoming Events -->
-                            <div class="events-card">
-                                <div class="events-card-header">
-                                    <span class="events-card-title">📌 Upcoming Events</span>
-                                    <span class="events-card-count" id="upcomingCount">0</span>
-                                </div>
-                                <div class="events-list" id="upcomingEventsList">
-                                    <div style="padding:24px;text-align:center;color:var(--text-muted);font-size:0.85rem;">No upcoming events</div>
-                                </div>
-                            </div>
-
-                            <!-- Legend -->
-                            <div class="calendar-legend">
-                                <div class="legend-title">Legend</div>
-                                <div class="legend-items">
-                                    <div class="legend-item"><div class="legend-dot exam"></div> Examinations</div>
-                                    <div class="legend-item"><div class="legend-dot holiday"></div> Holidays</div>
-                                    <div class="legend-item"><div class="legend-dot result"></div> Results Published</div>
-                                    <div class="legend-item"><div class="legend-dot event"></div> School Events</div>
-                                    <div class="legend-item"><div class="legend-dot deadline"></div> Deadlines</div>
-                                </div>
-                            </div>
+                        <div class="fc-calendar-container">
+                            <div id="calendar"></div>
                         </div>
                     </div>
-
-                    <!-- Tooltip -->
-                    <div class="cal-tooltip" id="calTooltip"></div>
                 </section>
 
                 <!-- ===== PAGE: ATTENDANCE ===== -->
                 <section id="page-attendance" style="display:none;">
                     <div class="stats-grid" style="margin-bottom:24px;">
                         <div class="stat-card">
-                            <div class="stat-icon green">✅</div>
+                            <div class="stat-icon green"></div>
                             <div class="stat-value" id="attPageRate">—</div>
                             <div class="stat-label">Attendance Rate</div>
                         </div>
@@ -163,7 +115,7 @@
                                 </tr>
                             </thead>
                             <tbody id="attendanceHistoryBody">
-                                <tr><td colspan="4" class="empty-state"><div class="empty-icon">📋</div><p>No attendance records</p></td></tr>
+                                <tr><td colspan="4" class="empty-state"><div class="empty-icon"></div><p>No attendance records</p></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -188,7 +140,7 @@
                                 </tr>
                             </thead>
                             <tbody id="allResultsBody">
-                                <tr><td colspan="7" class="empty-state"><div class="empty-icon">📝</div><p>No exam results yet</p></td></tr>
+                                <tr><td colspan="7" class="empty-state"><div class="empty-icon"></div><p>No exam results yet</p></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -257,460 +209,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="/js/api.js"></script>
-    <script>
-        // ============================================================
-        // STATE
-        // ============================================================
-        let currentUser = null;
-        let studentId = null;
-        let studentData = null;
-
-        // ============================================================
-        // INIT
-        // ============================================================
-        (async () => {
-            try {
-                const data = await api.checkSession();
-                if (!data.authenticated || data.user.role !== 'student') {
-                    window.location.href = '/';
-                    return;
-                }
-                currentUser = data.user;
-                studentId = data.student_id;
-
-                document.getElementById('userName').textContent = currentUser.username;
-                document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
-                document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-                await loadDashboard();
-                hideLoading();
-            } catch (e) {
-                window.location.href = '/';
-            }
-        })();
-
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.add('hide');
-            setTimeout(() => overlay.remove(), 500);
-        }
-
-        // ============================================================
-        // NAVIGATION
-        // ============================================================
-        function switchPage(page) {
-            document.querySelectorAll('[id^="page-"]').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-            document.getElementById(`page-${page}`).style.display = 'block';
-            document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
-
-            const titles = {
-                overview: 'My Dashboard',
-                attendance: 'My Attendance',
-                results: 'My Results',
-                profile: 'My Profile'
-            };
-            document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
-
-            if (page === 'attendance') loadAttendanceHistory();
-            if (page === 'results') loadAllResults();
-            if (page === 'profile') loadProfile();
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        // ============================================================
-        // DASHBOARD
-        // ============================================================
-        async function loadDashboard() {
-            try {
-                const data = await api.getStudentDashboard();
-                studentData = data.student;
-
-                // Welcome
-                document.getElementById('welcomeMsg').textContent = `Welcome back, ${data.student.first_name}!`;
-                document.getElementById('welcomeSub').textContent = `Grade ${data.student.grade} • ${data.student.faculty} • Roll No: ${data.student.roll_no}`;
-
-                // Render the academic calendar on the overview page
-                renderCalendar();
-            } catch (e) {
-                showToast('Failed to load dashboard', 'error');
-            }
-        }
-
-        // ============================================================
-        // ATTENDANCE HISTORY
-        // ============================================================
-        async function loadAttendanceHistory() {
-            if (!studentId) return;
-            try {
-                const records = await api.getStudentAttendance(studentId);
-
-                // Stats
-                const total = records.length;
-                const present = records.filter(r => r.status === 'Present').length;
-                const late = records.filter(r => r.status === 'Late').length;
-                const rate = total > 0 ? Math.round((present + late) / total * 100 * 10) / 10 : 0;
-
-                document.getElementById('attPageRate').textContent = rate + '%';
-                document.getElementById('attPageTotal').textContent = total;
-
-                const tbody = document.getElementById('attendanceHistoryBody');
-                if (records.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><div class="empty-icon">📋</div><p>No attendance records</p></td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = records.map(r => `
-                    <tr>
-                        <td>${new Date(r.date).toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' })}</td>
-                        <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
-                        <td>${r.remarks || '—'}</td>
-                        <td>${r.recorded_by || '—'}</td>
-                    </tr>
-                `).join('');
-            } catch (e) {
-                showToast('Failed to load attendance', 'error');
-            }
-        }
-
-        // ============================================================
-        // ALL RESULTS
-        // ============================================================
-        async function loadAllResults() {
-            if (!studentId) return;
-            try {
-                const results = await api.getStudentResults(studentId);
-
-                const tbody = document.getElementById('allResultsBody');
-                if (results.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon">📝</div><p>No exam results yet</p></td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = results.map(r => `
-                    <tr>
-                        <td>${r.subject_name || '—'}</td>
-                        <td><span style="font-size:0.8rem;color:var(--text-muted)">${r.subject_code || '—'}</span></td>
-                        <td>${r.exam_type}</td>
-                        <td><strong>${r.marks_obtained}</strong></td>
-                        <td>${r.full_marks}</td>
-                        <td><span class="badge ${r.grade_point === 'E' ? 'badge-absent' : 'badge-present'}">${r.grade_point || '—'}</span></td>
-                        <td>${r.percentage}%</td>
-                    </tr>
-                `).join('');
-            } catch (e) {
-                showToast('Failed to load results', 'error');
-            }
-        }
-
-        // ============================================================
-        // PROFILE
-        // ============================================================
-        function loadProfile() {
-            if (!studentData) return;
-            const s = studentData;
-
-            document.getElementById('profileAvatar').textContent = (s.first_name || 'S').charAt(0).toUpperCase();
-            document.getElementById('profileName').textContent = s.full_name;
-            document.getElementById('profileMeta').textContent = `Grade ${s.grade} • ${s.faculty}`;
-            document.getElementById('profileRoll').textContent = s.roll_no;
-            document.getElementById('profileGrade').textContent = `Grade ${s.grade}`;
-            document.getElementById('profileFaculty').textContent = s.faculty;
-            document.getElementById('profilePhone').textContent = s.phone || '—';
-            document.getElementById('profileDob').textContent = s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
-            document.getElementById('profileEnrolled').textContent = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
-            document.getElementById('profileAddress').textContent = s.address || '—';
-            document.getElementById('profileGuardian').textContent = s.guardian_name || '—';
-            document.getElementById('profileGuardianPhone').textContent = s.guardian_phone || '—';
-        }
-
-        // ============================================================
-        // LOGOUT, TOAST
-        // ============================================================
-        async function handleLogout() {
-            try { await api.logout(); } catch (e) {}
-            window.location.href = '/';
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-            toast.innerHTML = `<span>${icon}</span> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
-        }
-
-        // ============================================================
-        // ACADEMIC CALENDAR
-        // ============================================================
-        let calCurrentMonth = new Date().getMonth();
-        let calCurrentYear = new Date().getFullYear();
-
-        // Nepal Academic Events for 2026 (NEB academic calendar)
-        const academicEvents = [
-            // ---- BAISAKH / APRIL 2026 ----
-            { date: '2026-04-14', title: 'Nepali New Year 2083', type: 'holiday' },
-            { date: '2026-04-15', title: 'New Session Begins', type: 'event' },
-            { date: '2026-04-20', title: 'Admission Deadline', type: 'deadline' },
-
-            // ---- MAY 2026 ----
-            { date: '2026-05-01', title: 'May Day Holiday', type: 'holiday' },
-            { date: '2026-05-10', title: 'First Term Classes Begin', type: 'event' },
-            { date: '2026-05-29', title: 'Republic Day', type: 'holiday' },
-
-            // ---- JUNE 2026 ----
-            { date: '2026-06-15', title: 'Unit Test I Starts', type: 'exam' },
-            { date: '2026-06-20', title: 'Unit Test I Ends', type: 'exam' },
-            { date: '2026-06-28', title: 'Unit Test I Results', type: 'result' },
-
-            // ---- JULY 2026 ----
-            { date: '2026-07-01', title: 'Fee Payment Deadline', type: 'deadline' },
-            { date: '2026-07-17', title: 'Guru Purnima', type: 'holiday' },
-
-            // ---- AUGUST 2026 ----
-            { date: '2026-08-11', title: 'Janai Purnima', type: 'holiday' },
-            { date: '2026-08-12', title: 'Gai Jatra', type: 'holiday' },
-            { date: '2026-08-15', title: 'First Terminal Exam Starts', type: 'exam' },
-            { date: '2026-08-22', title: 'First Terminal Exam Ends', type: 'exam' },
-            { date: '2026-08-30', title: 'Terminal Exam Results', type: 'result' },
-
-            // ---- SEPTEMBER 2026 ----
-            { date: '2026-09-02', title: 'Teej Festival', type: 'holiday' },
-            { date: '2026-09-15', title: 'Indra Jatra', type: 'holiday' },
-            { date: '2026-09-27', title: 'Constitution Day', type: 'holiday' },
-
-            // ---- OCTOBER 2026 ----
-            { date: '2026-10-01', title: 'Ghatasthapana', type: 'holiday' },
-            { date: '2026-10-05', title: 'Fulpati', type: 'holiday' },
-            { date: '2026-10-06', title: 'Maha Ashtami', type: 'holiday' },
-            { date: '2026-10-07', title: 'Maha Nawami', type: 'holiday' },
-            { date: '2026-10-08', title: 'Vijaya Dashami', type: 'holiday' },
-            { date: '2026-10-09', title: 'Ekadashi', type: 'holiday' },
-            { date: '2026-10-10', title: 'Dashain Holiday', type: 'holiday' },
-            { date: '2026-10-20', title: 'Dashain Vacation Ends', type: 'event' },
-
-            // ---- NOVEMBER 2026 ----
-            { date: '2026-11-05', title: 'Laxmi Puja (Tihar)', type: 'holiday' },
-            { date: '2026-11-06', title: 'Govardhan Puja', type: 'holiday' },
-            { date: '2026-11-07', title: 'Bhai Tika', type: 'holiday' },
-            { date: '2026-11-08', title: 'Chhath Parva', type: 'holiday' },
-            { date: '2026-11-15', title: 'Unit Test II Starts', type: 'exam' },
-            { date: '2026-11-20', title: 'Unit Test II Ends', type: 'exam' },
-            { date: '2026-11-28', title: 'Unit Test II Results', type: 'result' },
-
-            // ---- DECEMBER 2026 ----
-            { date: '2026-12-10', title: 'Second Terminal Exam Starts', type: 'exam' },
-            { date: '2026-12-20', title: 'Second Terminal Exam Ends', type: 'exam' },
-            { date: '2026-12-25', title: 'Christmas Holiday', type: 'holiday' },
-            { date: '2026-12-30', title: 'Terminal Exam Results', type: 'result' },
-
-            // ---- JANUARY 2027 ----
-            { date: '2027-01-01', title: 'New Year Holiday', type: 'holiday' },
-            { date: '2027-01-10', title: 'Winter Vacation Starts', type: 'event' },
-            { date: '2027-01-15', title: 'Maghe Sankranti', type: 'holiday' },
-            { date: '2027-01-25', title: 'Winter Vacation Ends', type: 'event' },
-            { date: '2027-01-29', title: 'Martyrs\' Day', type: 'holiday' },
-
-            // ---- FEBRUARY 2027 ----
-            { date: '2027-02-05', title: 'Pre-Board Exam Starts (Gr.12)', type: 'exam' },
-            { date: '2027-02-15', title: 'Pre-Board Exam Ends (Gr.12)', type: 'exam' },
-            { date: '2027-02-19', title: 'Democracy Day', type: 'holiday' },
-            { date: '2027-02-25', title: 'Pre-Board Results', type: 'result' },
-
-            // ---- MARCH 2027 ----
-            { date: '2027-03-08', title: 'Women\'s Day Event', type: 'event' },
-            { date: '2027-03-14', title: 'Holi Festival', type: 'holiday' },
-            { date: '2027-03-15', title: 'NEB Board Exam Starts (Gr.12)', type: 'exam' },
-            { date: '2027-03-20', title: 'Final Exam Starts (Gr.11)', type: 'exam' },
-            { date: '2027-03-28', title: 'Final Exam Ends (Gr.11)', type: 'exam' },
-            { date: '2027-03-30', title: 'NEB Board Exam Ends (Gr.12)', type: 'exam' },
-
-            // ---- APRIL 2027 ----
-            { date: '2027-04-05', title: 'Grade 11 Results Published', type: 'result' },
-            { date: '2027-04-14', title: 'Nepali New Year 2084', type: 'holiday' },
-        ];
-
-        const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-        function getEventsForDate(dateStr) {
-            return academicEvents.filter(e => e.date === dateStr);
-        }
-
-        function renderCalendar(direction) {
-            const grid = document.getElementById('calendarGrid');
-            const monthEl = document.getElementById('calMonthName');
-            const yearEl = document.getElementById('calYear');
-
-            monthEl.textContent = MONTH_NAMES[calCurrentMonth];
-            yearEl.textContent = calCurrentYear;
-
-            // Slide animation
-            if (direction) {
-                grid.classList.remove('slide-left', 'slide-right');
-                void grid.offsetWidth; // force reflow
-                grid.classList.add(direction === 1 ? 'slide-left' : 'slide-right');
-            }
-
-            const firstDay = new Date(calCurrentYear, calCurrentMonth, 1).getDay(); // 0=Sun
-            const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
-            const daysInPrevMonth = new Date(calCurrentYear, calCurrentMonth, 0).getDate();
-            const today = new Date();
-            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-            let html = '';
-
-            // Previous month trailing days
-            for (let i = firstDay - 1; i >= 0; i--) {
-                const d = daysInPrevMonth - i;
-                html += `<div class="calendar-day other-month"><div class="day-number">${d}</div></div>`;
-            }
-
-            // Current month days
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${calCurrentYear}-${String(calCurrentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const dayOfWeek = new Date(calCurrentYear, calCurrentMonth, d).getDay();
-                const isToday = dateStr === todayStr;
-                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-                const events = getEventsForDate(dateStr);
-                const hasEvent = events.length > 0;
-
-                let classes = 'calendar-day';
-                if (isToday) classes += ' today';
-                if (isWeekend) classes += ' weekend';
-                if (hasEvent) classes += ' has-event';
-
-                let eventHTML = '';
-                if (hasEvent) {
-                    // Dots
-                    const dots = events.map(e => `<span class="event-dot ${e.type}"></span>`).join('');
-                    eventHTML += `<div class="event-dots">${dots}</div>`;
-                    // First event badge
-                    const firstEvt = events[0];
-                    eventHTML += `<span class="event-badge ${firstEvt.type}">${firstEvt.title}</span>`;
-                    if (events.length > 1) {
-                        eventHTML += `<span class="event-badge event" style="opacity:0.7;">+${events.length - 1} more</span>`;
-                    }
-                }
-
-                const evtData = hasEvent ? `data-date="${dateStr}"` : '';
-                html += `<div class="${classes}" ${evtData} ${hasEvent ? `onmouseenter="showTooltipCal(event,'${dateStr}')" onmouseleave="hideTooltipCal()"` : ''}>
-                    <div class="day-number">${d}</div>
-                    ${eventHTML}
-                </div>`;
-            }
-
-            // Next month leading days
-            const totalCells = firstDay + daysInMonth;
-            const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-            for (let i = 1; i <= remaining; i++) {
-                html += `<div class="calendar-day other-month"><div class="day-number">${i}</div></div>`;
-            }
-
-            grid.innerHTML = html;
-
-            // Update upcoming events sidebar
-            renderUpcomingEvents();
-        }
-
-        function changeMonth(dir) {
-            calCurrentMonth += dir;
-            if (calCurrentMonth > 11) { calCurrentMonth = 0; calCurrentYear++; }
-            if (calCurrentMonth < 0)  { calCurrentMonth = 11; calCurrentYear--; }
-            renderCalendar(dir);
-        }
-
-        function goToToday() {
-            const now = new Date();
-            calCurrentMonth = now.getMonth();
-            calCurrentYear = now.getFullYear();
-            renderCalendar();
-        }
-
-        // Tooltip
-        function showTooltipCal(evt, dateStr) {
-            const tooltip = document.getElementById('calTooltip');
-            const events = getEventsForDate(dateStr);
-            if (events.length === 0) return;
-
-            const dateObj = new Date(dateStr + 'T00:00:00');
-            const dateLabel = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-            let html = `<div class="tooltip-date">${dateLabel}</div>`;
-            events.forEach(e => {
-                html += `<div class="tooltip-event">
-                    <div class="tooltip-event-dot" style="background:var(--${e.type === 'exam' ? 'primary-500' : e.type === 'holiday' ? 'danger' : e.type === 'result' ? 'success' : e.type === 'deadline' ? 'warning' : 'info'})"></div>
-                    <div class="tooltip-event-info">
-                        <div class="tooltip-event-title">${e.title}</div>
-                        <div class="tooltip-event-type">${e.type}</div>
-                    </div>
-                </div>`;
-            });
-
-            tooltip.innerHTML = html;
-
-            // Position near cursor
-            const rect = evt.currentTarget.getBoundingClientRect();
-            let left = rect.right + 12;
-            let top = rect.top;
-
-            // Keep tooltip within viewport
-            if (left + 280 > window.innerWidth) {
-                left = rect.left - 280 - 12;
-            }
-            if (top + 200 > window.innerHeight) {
-                top = window.innerHeight - 210;
-            }
-
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
-            tooltip.classList.add('visible');
-        }
-
-        function hideTooltipCal() {
-            document.getElementById('calTooltip').classList.remove('visible');
-        }
-
-        // Render sidebar upcoming events
-        function renderUpcomingEvents() {
-            const list = document.getElementById('upcomingEventsList');
-            const countEl = document.getElementById('upcomingCount');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            // Get events from today onward, sorted, limit 8
-            const upcoming = academicEvents
-                .filter(e => new Date(e.date + 'T00:00:00') >= today)
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .slice(0, 8);
-
-            countEl.textContent = upcoming.length;
-
-            if (upcoming.length === 0) {
-                list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:0.85rem;">No upcoming events</div>';
-                return;
-            }
-
-            list.innerHTML = upcoming.map(e => {
-                const d = new Date(e.date + 'T00:00:00');
-                return `<div class="event-list-item">
-                    <div class="event-date-badge">
-                        <div class="event-day">${d.getDate()}</div>
-                        <div class="event-month-short">${MONTH_SHORT[d.getMonth()]}</div>
-                    </div>
-                    <div class="event-details">
-                        <div class="event-name">${e.title}</div>
-                        <span class="event-type-label ${e.type}">${e.type}</span>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-    </script>
+    <script src="/student/dashboard.js"></script>
 </body>
 </html>

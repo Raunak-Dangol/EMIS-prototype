@@ -343,25 +343,12 @@ def get_teachers():
 @admin_required
 def create_teacher():
     data = request.get_json()
-    required = ['first_name', 'last_name', 'username', 'password']
+    required = ['first_name', 'last_name']
     for field in required:
         if not data.get(field):
             return jsonify({'error': f'{field} is required'}), 400
 
-    if User.query.filter_by(username=data['username']).first():
-        return jsonify({'error': 'Username already exists'}), 409
-
-    user = User(
-        username=data['username'],
-        email=data.get('email'),
-        role='teacher'
-    )
-    user.set_password(data['password'])
-    db.session.add(user)
-    db.session.flush()
-
     teacher = Teacher(
-        user_id=user.id,
         first_name=data['first_name'],
         last_name=data['last_name'],
         phone=data.get('phone'),
@@ -397,8 +384,6 @@ def update_teacher(teacher_id):
         teacher.department = data['department']
     if 'qualification' in data:
         teacher.qualification = data['qualification']
-    if data.get('password'):
-        teacher.user.set_password(data['password'])
 
     db.session.commit()
     return jsonify({'message': 'Teacher updated', 'teacher': teacher.to_dict()}), 200
@@ -411,9 +396,7 @@ def delete_teacher(teacher_id):
     # Un-assign from subjects first
     for subject in teacher.subjects:
         subject.teacher_id = None
-    user = teacher.user
     db.session.delete(teacher)
-    db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'Teacher deleted'}), 200
 

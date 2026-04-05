@@ -108,7 +108,7 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${message}`;
+            toast.innerHTML = `<span>${type === 'success' ? '' : type === 'error' ? '' : ''}</span> ${message}`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
