@@ -39,10 +39,11 @@
         // NAVIGATION
         // ============================================================
         function switchPage(page) {
-            document.querySelectorAll('[id^="page-"]').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('[id^="page-"]').forEach(el => { el.classList.remove('is-visible'); el.classList.add('page-section-hidden'); });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            document.getElementById(`page-${page}`).style.display = 'block';
+            document.getElementById(`page-${page}`).classList.remove('page-section-hidden');
+            document.getElementById(`page-${page}`).classList.add('is-visible');
             document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
 
             const titles = {
@@ -134,7 +135,7 @@
                 tbody.innerHTML = results.map(r => `
                     <tr>
                         <td>${r.subject_name || '—'}</td>
-                        <td><span style="font-size:0.8rem;color:var(--text-muted)">${r.subject_code || '—'}</span></td>
+                        <td><span class="record-count">${r.subject_code || '—'}</span></td>
                         <td>${r.exam_type}</td>
                         <td><strong>${r.marks_obtained}</strong></td>
                         <td>${r.full_marks}</td>
@@ -183,7 +184,7 @@
             const icon = type === 'success' ? '' : type === 'error' ? '' : '';
             toast.innerHTML = `<span>${icon}</span> ${message}`;
             container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
+            setTimeout(() => { toast.classList.add('toast-out'); setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
         // ============================================================

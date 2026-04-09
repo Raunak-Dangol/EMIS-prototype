@@ -1072,6 +1072,209 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ============================================================
+   UTILITY CLASSES (replaces inline styles)
+   ============================================================ */
+
+/* Flex helpers */
+.flex-row    { display: flex; align-items: center; }
+.gap-12      { gap: 12px; }
+.gap-20      { gap: 20px; }
+.flex-1      { flex: 1; }
+
+/* Spacing */
+.mb-24       { margin-bottom: 24px; }
+.mb-28       { margin-bottom: 28px; }
+.mb-16       { margin-bottom: 16px; }
+
+/* Page sections — hidden by default, shown via JS */
+.page-section-hidden { display: none; }
+
+/* Topbar helpers */
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+
+.menu-toggle-btn { display: none; }
+
+.topbar-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Sidebar logout button */
+.logout-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 4px;
+}
+
+/* Record / item count text */
+.record-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ---- Login page ---- */
+.login-orb {
+    position: absolute;
+    bottom: -120px;
+    left: -80px;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(107, 33, 168, 0.2), transparent 70%);
+    animation: float 7s ease-in-out infinite reverse;
+    z-index: 0;
+}
+
+.login-svg { margin-bottom: 12px; }
+
+.login-error {
+    display: none;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    font-size: 0.85rem;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.login-footer p {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+/* ---- Welcome banner (student dashboard) ---- */
+.welcome-panel-body {
+    padding: 28px 32px;
+}
+
+.welcome-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.welcome-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ---- Profile page (student dashboard) ---- */
+.profile-panel { max-width: 700px; }
+
+.profile-body { padding: 28px 32px; }
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 1.5rem;
+}
+
+.profile-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.profile-meta {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.profile-field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.profile-field-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.form-grid-gap-20 { gap: 20px; }
+
+/* ---- Admin filter inputs ---- */
+.filter-date-input {
+    flex: 0 0 auto;
+    width: 200px;
+}
+
+.filter-marks-date {
+    flex: 0 0 auto;
+    width: 180px;
+}
+
+/* ---- Admin overview grid override ---- */
+.stats-grid-auto-200 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* ---- Marks table column widths ---- */
+.col-narrow { width: 60px; }
+.col-marks  { width: 120px; }
+.col-grade  { width: 80px; }
+
+.marks-row-num { color: var(--text-muted); }
+
+.marks-grade-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* ---- Assign teacher modal ---- */
+.modal-sm { max-width: 400px; }
+
+.assign-info {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+/* ---- Teacher name in subjects table ---- */
+.teacher-assigned {
+    color: var(--primary-700);
+    font-weight: 500;
+}
+
+/* ---- Attendance grid padding ---- */
+.attendance-grid-padded { padding: 20px; }
+
+/* ---- Marks grid display ---- */
+.marks-table-hidden { display: none; }
+
+/* ---- JS visibility helpers ---- */
+.is-visible  { display: block; }
+.is-hidden   { display: none; }
+.is-table     { display: table; }
+
+/* ---- Toast fade out ---- */
+.toast-out { opacity: 0; }
+
+/* ---- Grade color states ---- */
+.grade-pass { color: var(--success); }
+.grade-fail { color: var(--danger); }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 

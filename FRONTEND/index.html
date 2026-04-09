@@ -10,18 +10,14 @@
 <body>
     <div class="login-page">
         <!-- Decorative orb bottom-left -->
-        <div style="position:absolute;bottom:-120px;left:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(107,33,168,0.2),transparent 70%);animation:float 7s ease-in-out infinite reverse;z-index:0;"></div>
+        <div class="login-orb"></div>
 
         <div class="login-card">
             <div class="logo-container">
                 <!-- Inline SVG Logo (NCCS Purple) -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 100 100" style="margin-bottom:12px;">
-                    <rect x="10" y="15" width="80" height="70" rx="8" fill="none" stroke="#6b21a8" stroke-width="3"/>
-                    <text x="50" y="58" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#6b21a8" text-anchor="middle">NCCS</text>
-                    <line x1="25" y1="68" x2="75" y2="68" stroke="#6b21a8" stroke-width="2"/>
-                    <circle cx="50" cy="30" r="4" fill="#6b21a8" opacity="0.6"/>
-                </svg>
-                <h1>NCCS EMIS</h1>
+                <!-- Custom Logo based on user upload -->
+                <img src="/img/NCCSLOGO.png" alt="NCCS Secondary School">
+    
                 <p>Education Management Information System</p>
             </div>
 
@@ -29,16 +25,16 @@
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
-                    <span class="input-icon">👤</span>
+                    <span class="input-icon"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <span class="input-icon">🔒</span>
+                    <span class="input-icon"></span>
                 </div>
 
-                <div id="loginError" style="display:none;padding:10px 14px;margin-bottom:16px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;font-size:0.85rem;"></div>
+                <div id="loginError" class="login-error"></div>
 
                 <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
                     <span class="spinner"></span>
@@ -46,8 +42,8 @@
                 </button>
             </form>
 
-            <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
-                <p style="font-size:0.75rem;color:#9ca3af;">NCCS Secondary School &bull; Kathmandu, Nepal</p>
+            <div class="login-footer">
+                <p>NCCS Secondary School &bull; Kathmandu, Nepal</p>
             </div>
         </div>
     </div>
@@ -86,12 +82,12 @@
 
             if (!username || !password) {
                 errorDiv.textContent = 'Please enter both username and password.';
-                errorDiv.style.display = 'block';
+                errorDiv.classList.add('is-visible');
                 return;
             }
 
             btn.classList.add('loading');
-            errorDiv.style.display = 'none';
+            errorDiv.classList.remove('is-visible');
 
             try {
                 const data = await api.login(username, password);
@@ -99,7 +95,7 @@
                 setTimeout(() => redirectByRole(data.user.role), 500);
             } catch (error) {
                 errorDiv.textContent = error.message || 'Invalid credentials. Please try again.';
-                errorDiv.style.display = 'block';
+                errorDiv.classList.add('is-visible');
                 btn.classList.remove('loading');
             }
         });
