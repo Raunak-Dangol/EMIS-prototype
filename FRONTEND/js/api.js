@@ -14,10 +14,17 @@ const api = {
      */
     async request(endpoint, options = {}) {
         const config = {
-            headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             ...options
         };
+
+        // If body is FormData, let the browser set the Content-Type (multipart boundary).
+        // Otherwise default to JSON.
+        if (config.body instanceof FormData) {
+            // Do NOT set Content-Type — browser will set it with boundary
+        } else {
+            config.headers = { 'Content-Type': 'application/json', ...(config.headers || {}) };
+        }
 
         try {
             const response = await fetch(`${API_BASE}${endpoint}`, config);
@@ -70,7 +77,7 @@ const api = {
     createStudent(data) {
         return this.request('/api/students', {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: data
         });
     },
 
@@ -81,7 +88,7 @@ const api = {
     updateStudent(id, data) {
         return this.request(`/api/students/${id}`, {
             method: 'PUT',
-            body: JSON.stringify(data)
+            body: data
         });
     },
 

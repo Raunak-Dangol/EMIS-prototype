@@ -53,6 +53,16 @@ class Student(db.Model):
     date_of_birth = db.Column(db.Date, nullable=True)
     enrolled_date = db.Column(db.Date, default=date.today)
 
+    # Parent details
+    father_name = db.Column(db.String(150), nullable=True)
+    father_phone = db.Column(db.String(20), nullable=True)
+    mother_name = db.Column(db.String(150), nullable=True)
+    mother_phone = db.Column(db.String(20), nullable=True)
+    parent_education = db.Column(db.String(50), nullable=True)  # e.g. 'high school', 'graduate', etc.
+
+    # Profile image path (relative to uploads/)
+    profile_image = db.Column(db.String(255), nullable=True)
+
     # Relationships
     attendances = db.relationship('Attendance', backref='student', lazy='dynamic', cascade='all, delete-orphan')
     exam_results = db.relationship('ExamResult', backref='student', lazy='dynamic', cascade='all, delete-orphan')
@@ -77,7 +87,13 @@ class Student(db.Model):
             'guardian_name': self.guardian_name,
             'guardian_phone': self.guardian_phone,
             'date_of_birth': self.date_of_birth.isoformat() if self.date_of_birth else None,
-            'enrolled_date': self.enrolled_date.isoformat() if self.enrolled_date else None
+            'enrolled_date': self.enrolled_date.isoformat() if self.enrolled_date else None,
+            'father_name': self.father_name,
+            'father_phone': self.father_phone,
+            'mother_name': self.mother_name,
+            'mother_phone': self.mother_phone,
+            'parent_education': self.parent_education,
+            'profile_image': self.profile_image
         }
 
 

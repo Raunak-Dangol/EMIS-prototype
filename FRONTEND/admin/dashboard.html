@@ -338,6 +338,39 @@
                         <div class="form-group"><label for="sfGuardian">Guardian Name</label><input type="text" id="sfGuardian"></div>
                         <div class="form-group"><label for="sfGuardianPhone">Guardian Phone</label><input type="text" id="sfGuardianPhone"></div>
                     </div>
+
+                    <div class="form-section-divider">Parent Details</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="sfFatherName">Father's Name</label><input type="text" id="sfFatherName"></div>
+                        <div class="form-group"><label for="sfFatherPhone">Father's Phone</label><input type="text" id="sfFatherPhone"></div>
+                        <div class="form-group"><label for="sfMotherName">Mother's Name</label><input type="text" id="sfMotherName"></div>
+                        <div class="form-group"><label for="sfMotherPhone">Mother's Phone</label><input type="text" id="sfMotherPhone"></div>
+                        <div class="form-group full-width"><label for="sfParentEducation">Parent Education</label>
+                            <select id="sfParentEducation">
+                                <option value="">Select</option>
+                                <option value="no formal">No Formal Education</option>
+                                <option value="high school">High School</option>
+                                <option value="diploma">Diploma</option>
+                                <option value="graduate">Graduate</option>
+                                <option value="post graduate">Post Graduate</option>
+                                <option value="phd">PhD</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section-divider">Profile Photo</div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="sfProfileImage">Upload Image</label>
+                            <div class="file-upload-wrapper">
+                                <div class="file-upload-preview" id="sfImagePreview">
+                                    <span class="file-upload-placeholder">No image selected</span>
+                                </div>
+                                <input type="file" id="sfProfileImage" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" onchange="previewProfileImage(this)">
+                                <label for="sfProfileImage" class="btn btn-secondary btn-sm file-upload-btn">Choose File</label>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">

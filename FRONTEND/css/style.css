@@ -1275,6 +1275,127 @@ img { max-width: 100%; height: auto; }
 .grade-fail { color: var(--danger); }
 
 /* ============================================================
+   FORM SECTION DIVIDER
+   ============================================================ */
+
+.form-section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.form-section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ============================================================
+   FILE UPLOAD
+   ============================================================ */
+
+.file-upload-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.file-upload-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    border: 2px dashed var(--border);
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    flex-shrink: 0;
+}
+
+.file-upload-preview:hover {
+    border-color: var(--accent);
+}
+
+.file-upload-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: calc(var(--radius-sm) - 2px);
+}
+
+.file-upload-placeholder {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px;
+    line-height: 1.3;
+}
+
+/* Hide default file input — trigger via label */
+input[type="file"]#sfProfileImage {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.file-upload-btn {
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   PROFILE IMAGE (Student Dashboard)
+   ============================================================ */
+
+.profile-avatar-container {
+    flex-shrink: 0;
+}
+
+.profile-avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-200);
+    box-shadow: 0 2px 8px rgba(107, 33, 168, 0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.profile-avatar-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(107, 33, 168, 0.25);
+}
+
+/* Sidebar avatar with profile image */
+.user-avatar.has-image {
+    padding: 0;
+    overflow: hidden;
+}
+
+.sidebar-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 

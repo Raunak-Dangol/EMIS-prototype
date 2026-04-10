@@ -98,7 +98,7 @@
             document.getElementById('studentModalTitle').textContent = edit ? 'Edit Student' : 'Add New Student';
             document.getElementById('sfPassword').required = !edit;
             document.getElementById('sfUsername').disabled = edit;
-            if (!edit) { document.getElementById('studentForm').reset(); document.getElementById('editStudentId').value = ''; }
+            if (!edit) { document.getElementById('studentForm').reset(); document.getElementById('editStudentId').value = ''; resetImagePreview(); }
             openModal('studentModal');
         }
 
@@ -118,16 +118,53 @@
                 document.getElementById('sfGuardian').value = s.guardian_name || '';
                 document.getElementById('sfGuardianPhone').value = s.guardian_phone || '';
                 document.getElementById('sfPassword').value = '';
+                // Parent details
+                document.getElementById('sfFatherName').value = s.father_name || '';
+                document.getElementById('sfFatherPhone').value = s.father_phone || '';
+                document.getElementById('sfMotherName').value = s.mother_name || '';
+                document.getElementById('sfMotherPhone').value = s.mother_phone || '';
+                document.getElementById('sfParentEducation').value = s.parent_education || '';
+                // Profile image preview
+                const preview = document.getElementById('sfImagePreview');
+                if (s.profile_image) {
+                    preview.innerHTML = `<img src="${s.profile_image}" alt="Profile">`;
+                } else {
+                    resetImagePreview();
+                }
                 openStudentModal(true);
             } catch (e) { showToast('Failed to load student', 'error'); }
         }
 
         async function submitStudent() {
             const id = document.getElementById('editStudentId').value;
-            const data = { first_name:document.getElementById('sfFirstName').value, last_name:document.getElementById('sfLastName').value, username:document.getElementById('sfUsername').value, password:document.getElementById('sfPassword').value, grade:document.getElementById('sfGrade').value, faculty:document.getElementById('sfFaculty').value, roll_no:document.getElementById('sfRollNo').value, phone:document.getElementById('sfPhone').value, date_of_birth:document.getElementById('sfDob').value, email:document.getElementById('sfEmail').value, address:document.getElementById('sfAddress').value, guardian_name:document.getElementById('sfGuardian').value, guardian_phone:document.getElementById('sfGuardianPhone').value };
+            const formData = new FormData();
+            formData.append('first_name', document.getElementById('sfFirstName').value);
+            formData.append('last_name', document.getElementById('sfLastName').value);
+            formData.append('username', document.getElementById('sfUsername').value);
+            formData.append('password', document.getElementById('sfPassword').value);
+            formData.append('grade', document.getElementById('sfGrade').value);
+            formData.append('faculty', document.getElementById('sfFaculty').value);
+            formData.append('roll_no', document.getElementById('sfRollNo').value);
+            formData.append('phone', document.getElementById('sfPhone').value);
+            formData.append('date_of_birth', document.getElementById('sfDob').value);
+            formData.append('email', document.getElementById('sfEmail').value);
+            formData.append('address', document.getElementById('sfAddress').value);
+            formData.append('guardian_name', document.getElementById('sfGuardian').value);
+            formData.append('guardian_phone', document.getElementById('sfGuardianPhone').value);
+            // Parent details
+            formData.append('father_name', document.getElementById('sfFatherName').value);
+            formData.append('father_phone', document.getElementById('sfFatherPhone').value);
+            formData.append('mother_name', document.getElementById('sfMotherName').value);
+            formData.append('mother_phone', document.getElementById('sfMotherPhone').value);
+            formData.append('parent_education', document.getElementById('sfParentEducation').value);
+            // Profile image (file)
+            const fileInput = document.getElementById('sfProfileImage');
+            if (fileInput.files.length > 0) {
+                formData.append('profile_image', fileInput.files[0]);
+            }
             try {
-                if (id) { await api.updateStudent(id, data); showToast('Student updated', 'success'); }
-                else { if (!data.password) { showToast('Password required', 'error'); return; } await api.createStudent(data); showToast('Student created', 'success'); }
+                if (id) { await api.updateStudent(id, formData); showToast('Student updated', 'success'); }
+                else { if (!formData.get('password')) { showToast('Password required', 'error'); return; } await api.createStudent(formData); showToast('Student created', 'success'); }
                 closeModal('studentModal'); loadStudents();
             } catch (e) { showToast(e.message || 'Failed to save', 'error'); }
         }
@@ -433,4 +470,24 @@
             toast.innerHTML = `<span>${icon}</span> ${message}`;
             container.appendChild(toast);
             setTimeout(() => { toast.classList.add('toast-out'); setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+
+        // ============================================================
+        // PROFILE IMAGE PREVIEW
+        // ============================================================
+        function previewProfileImage(input) {
+            const preview = document.getElementById('sfImagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                resetImagePreview();
+            }
+        }
+
+        function resetImagePreview() {
+            document.getElementById('sfImagePreview').innerHTML = '<span class="file-upload-placeholder">No image selected</span>';
         }

@@ -155,7 +155,19 @@
             if (!studentData) return;
             const s = studentData;
 
-            document.getElementById('profileAvatar').textContent = (s.first_name || 'S').charAt(0).toUpperCase();
+            // Profile image or letter avatar
+            const avatarContainer = document.getElementById('profileAvatarContainer');
+            const sidebarAvatar = document.getElementById('userAvatar');
+            if (s.profile_image) {
+                avatarContainer.innerHTML = `<img src="${s.profile_image}" alt="${s.full_name}" class="profile-avatar-img">`;
+                sidebarAvatar.innerHTML = `<img src="${s.profile_image}" alt="${s.full_name}" class="sidebar-avatar-img">`;
+                sidebarAvatar.classList.add('has-image');
+            } else {
+                avatarContainer.innerHTML = `<div class="user-avatar profile-avatar">${(s.first_name || 'S').charAt(0).toUpperCase()}</div>`;
+                sidebarAvatar.textContent = (s.first_name || 'S').charAt(0).toUpperCase();
+                sidebarAvatar.classList.remove('has-image');
+            }
+
             document.getElementById('profileName').textContent = s.full_name;
             document.getElementById('profileMeta').textContent = `Grade ${s.grade} • ${s.faculty}`;
             document.getElementById('profileRoll').textContent = s.roll_no;
@@ -167,6 +179,16 @@
             document.getElementById('profileAddress').textContent = s.address || '—';
             document.getElementById('profileGuardian').textContent = s.guardian_name || '—';
             document.getElementById('profileGuardianPhone').textContent = s.guardian_phone || '—';
+
+            // Parent details
+            document.getElementById('profileFatherName').textContent = s.father_name || '—';
+            document.getElementById('profileFatherPhone').textContent = s.father_phone || '—';
+            document.getElementById('profileMotherName').textContent = s.mother_name || '—';
+            document.getElementById('profileMotherPhone').textContent = s.mother_phone || '—';
+
+            // Capitalize parent education nicely
+            const edu = s.parent_education;
+            document.getElementById('profileParentEducation').textContent = edu ? edu.replace(/\b\w/g, l => l.toUpperCase()) : '—';
         }
 
         // ============================================================

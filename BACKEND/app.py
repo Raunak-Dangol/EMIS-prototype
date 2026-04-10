@@ -1,10 +1,12 @@
 import os
+import uuid
 from datetime import datetime, date, timedelta
 from functools import wraps
 
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 
 from database import db, init_db
 from models import User, Student, Teacher, Subject, Attendance, ExamResult
@@ -21,10 +23,29 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'dat
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 
+# Upload configuration
+UPLOAD_FOLDER = os.path.join(FRONTEND_DIR, 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 CORS(app, supports_credentials=True)
 
 # Initialize DB
 init_db(app)
+
+
+def allowed_file(filename):
+    """Check if the uploaded file has an allowed image extension."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def save_upload(file):
+    """Save an uploaded image with a unique name. Returns the relative path."""
+    ext = file.filename.rsplit('.', 1)[1].lower()
+    unique_name = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}.{ext}"
+    safe_name = secure_filename(unique_name)
+    file.save(os.path.join(UPLOAD_FOLDER, safe_name))
+    return f'/uploads/{safe_name}'
 
 # ---------------------------------------------------------------------------
 # Auth Decorators
@@ -67,6 +88,11 @@ def serve_admin_dashboard():
 @app.route('/student/dashboard')
 def serve_student_dashboard():
     return send_from_directory(FRONTEND_DIR, 'student/dashboard.html')
+
+
+@app.route('/uploads/<path:filename>')
+def serve_upload(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 
 # ---------------------------------------------------------------------------
@@ -229,7 +255,11 @@ def get_students():
 @app.route('/api/students', methods=['POST'])
 @admin_required
 def create_student():
-    data = request.get_json()
+    # Support both JSON and multipart/form-data
+    if request.content_type and 'multipart/form-data' in request.content_type:
+        data = request.form.to_dict()
+    else:
+        data = request.get_json() or {}
 
     required = ['first_name', 'last_name', 'grade', 'faculty', 'roll_no', 'username', 'password']
     for field in required:
@@ -244,6 +274,13 @@ def create_student():
     existing = Student.query.filter_by(roll_no=data['roll_no'], grade=data['grade']).first()
     if existing:
         return jsonify({'error': 'Roll number already exists for this grade'}), 409
+
+    # Handle profile image upload
+    profile_image_path = None
+    if 'profile_image' in request.files:
+        file = request.files['profile_image']
+        if file and file.filename and allowed_file(file.filename):
+            profile_image_path = save_upload(file)
 
     # Create user account
     user = User(
@@ -267,7 +304,13 @@ def create_student():
         address=data.get('address'),
         guardian_name=data.get('guardian_name'),
         guardian_phone=data.get('guardian_phone'),
-        date_of_birth=datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date() if data.get('date_of_birth') else None
+        date_of_birth=datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date() if data.get('date_of_birth') else None,
+        father_name=data.get('father_name'),
+        father_phone=data.get('father_phone'),
+        mother_name=data.get('mother_name'),
+        mother_phone=data.get('mother_phone'),
+        parent_education=data.get('parent_education'),
+        profile_image=profile_image_path
     )
     db.session.add(student)
     db.session.commit()
@@ -286,7 +329,12 @@ def get_student(student_id):
 @admin_required
 def update_student(student_id):
     student = Student.query.get_or_404(student_id)
-    data = request.get_json()
+
+    # Support both JSON and multipart/form-data
+    if request.content_type and 'multipart/form-data' in request.content_type:
+        data = request.form.to_dict()
+    else:
+        data = request.get_json() or {}
 
     if 'first_name' in data:
         student.first_name = data['first_name']
@@ -308,6 +356,29 @@ def update_student(student_id):
         student.guardian_phone = data['guardian_phone']
     if 'date_of_birth' in data and data['date_of_birth']:
         student.date_of_birth = datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date()
+
+    # New parent fields
+    if 'father_name' in data:
+        student.father_name = data['father_name']
+    if 'father_phone' in data:
+        student.father_phone = data['father_phone']
+    if 'mother_name' in data:
+        student.mother_name = data['mother_name']
+    if 'mother_phone' in data:
+        student.mother_phone = data['mother_phone']
+    if 'parent_education' in data:
+        student.parent_education = data['parent_education']
+
+    # Handle profile image upload
+    if 'profile_image' in request.files:
+        file = request.files['profile_image']
+        if file and file.filename and allowed_file(file.filename):
+            # Delete old image if exists
+            if student.profile_image:
+                old_path = os.path.join(FRONTEND_DIR, student.profile_image.lstrip('/'))
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+            student.profile_image = save_upload(file)
 
     # Update password if provided
     if data.get('password'):
