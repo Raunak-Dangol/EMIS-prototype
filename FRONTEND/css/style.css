@@ -1271,29 +1271,29 @@ img { max-width: 100%; height: auto; }
 .profile-hero-badges {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 12px;
 }
 
 .profile-hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 12px;
+    padding: 6px 14px;
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(4px);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 100px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: rgba(255,255,255,0.9);
 }
 
 /* ---- Profile Sections Container ---- */
 .profile-sections {
-    padding: 28px 32px 32px;
+    padding: 32px 36px 40px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 28px;
 }
 
 /* ---- Info Card (each grouped section) ---- */
@@ -1301,7 +1301,7 @@ img { max-width: 100%; height: auto; }
     background: var(--bg-tertiary);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 20px 22px;
+    padding: 24px 28px;
     transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), border-color 0.3s;
     animation: profileFadeUp 0.5s var(--ease-out) both;
 }
@@ -1336,38 +1336,26 @@ img { max-width: 100%; height: auto; }
 .profile-info-card__title {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--primary-700);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
-}
-
-.profile-info-card__icon {
-    font-size: 1rem;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--primary-100);
-    border-radius: 6px;
 }
 
 /* Grid inside cards */
 .profile-info-card__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 20px 16px;
 }
 
 /* Single field item */
 .profile-info-item {
-    padding-left: 12px;
+    padding-left: 16px;
     border-left: 3px solid var(--primary-200);
     transition: border-color 0.2s;
 }

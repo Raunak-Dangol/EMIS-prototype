@@ -173,11 +173,11 @@
             document.getElementById('profileMeta').textContent = `Grade ${s.grade} • ${s.faculty} • Roll No: ${s.roll_no}`;
 
             // Hero badges
-            document.getElementById('profileHeroPhone').textContent = `📞 ${s.phone || 'N/A'}`;
+            document.getElementById('profileHeroPhone').textContent = s.phone || 'N/A';
             const dobFormatted = s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
-            document.getElementById('profileHeroDob').textContent = `📅 ${dobFormatted}`;
+            document.getElementById('profileHeroDob').textContent = dobFormatted;
             const enrollFormatted = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
-            document.getElementById('profileHeroEnrolled').textContent = `🎓 ${enrollFormatted}`;
+            document.getElementById('profileHeroEnrolled').textContent = enrollFormatted;
 
             // Academic info card
             document.getElementById('profileRoll').textContent = s.roll_no;
