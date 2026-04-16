@@ -143,79 +143,106 @@
 
                 <section id="page-profile" class="page-section-hidden">
                     <div class="data-panel profile-panel">
-                        <div class="panel-header">
-                            <span class="panel-title">Student Profile</span>
-                        </div>
-                        <div class="profile-body">
-                            <div class="profile-header">
-                                <div class="profile-avatar-container" id="profileAvatarContainer">
+                        <!-- Hero Banner -->
+                        <div class="profile-hero">
+                            <div class="profile-hero-content">
+                                <div class="profile-hero-avatar" id="profileAvatarContainer">
                                     <div class="user-avatar profile-avatar" id="profileAvatar">S</div>
                                 </div>
-                                <div>
-                                    <h3 class="profile-name" id="profileName">—</h3>
-                                    <p class="profile-meta" id="profileMeta">—</p>
+                                <div class="profile-hero-info">
+                                    <h3 class="profile-hero-name" id="profileName">—</h3>
+                                    <p class="profile-hero-meta" id="profileMeta">—</p>
+                                    <div class="profile-hero-badges">
+                                        <span class="profile-hero-badge" id="profileHeroPhone">📞 —</span>
+                                        <span class="profile-hero-badge" id="profileHeroDob">📅 —</span>
+                                        <span class="profile-hero-badge" id="profileHeroEnrolled">🎓 —</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-grid form-grid-gap-20">
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Roll No</div>
-                                    <div class="profile-field-value" id="profileRoll">—</div>
+                        </div>
+
+                        <!-- Info Sections -->
+                        <div class="profile-sections">
+                            <!-- Academic Info -->
+                            <div class="profile-info-card">
+                                <div class="profile-info-card__title">
+                                    <span class="profile-info-card__icon">📚</span> Academic Info
                                 </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Grade</div>
-                                    <div class="profile-field-value" id="profileGrade">—</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Faculty</div>
-                                    <div class="profile-field-value" id="profileFaculty">—</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Phone</div>
-                                    <div class="profile-field-value" id="profilePhone">—</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Date of Birth</div>
-                                    <div class="profile-field-value" id="profileDob">—</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Enrolled Date</div>
-                                    <div class="profile-field-value" id="profileEnrolled">—</div>
-                                </div>
-                                <div class="profile-field full-width">
-                                    <div class="profile-field-label">Address</div>
-                                    <div class="profile-field-value" id="profileAddress">—</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Guardian Name</div>
-                                    <div class="profile-field-value" id="profileGuardian">—</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Guardian Phone</div>
-                                    <div class="profile-field-value" id="profileGuardianPhone">—</div>
+                                <div class="profile-info-card__grid">
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Roll No</div>
+                                        <div class="profile-info-item__value" id="profileRoll">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Grade</div>
+                                        <div class="profile-info-item__value" id="profileGrade">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Faculty</div>
+                                        <div class="profile-info-item__value" id="profileFaculty">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Enrolled Date</div>
+                                        <div class="profile-info-item__value" id="profileEnrolled">—</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-section-divider">Parent Information</div>
-                            <div class="form-grid form-grid-gap-20">
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Father's Name</div>
-                                    <div class="profile-field-value" id="profileFatherName">—</div>
+                            <!-- Personal Info -->
+                            <div class="profile-info-card">
+                                <div class="profile-info-card__title">
+                                    <span class="profile-info-card__icon">👤</span> Personal Info
                                 </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Father's Phone</div>
-                                    <div class="profile-field-value" id="profileFatherPhone">—</div>
+                                <div class="profile-info-card__grid">
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Phone</div>
+                                        <div class="profile-info-item__value" id="profilePhone">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Date of Birth</div>
+                                        <div class="profile-info-item__value" id="profileDob">—</div>
+                                    </div>
+                                    <div class="profile-info-item profile-info-item--full">
+                                        <div class="profile-info-item__label">Address</div>
+                                        <div class="profile-info-item__value" id="profileAddress">—</div>
+                                    </div>
                                 </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Mother's Name</div>
-                                    <div class="profile-field-value" id="profileMotherName">—</div>
+                            </div>
+
+                            <!-- Family Info (full-width card) -->
+                            <div class="profile-info-card profile-info-card--wide">
+                                <div class="profile-info-card__title">
+                                    <span class="profile-info-card__icon">👨‍👩‍👦</span> Family Information
                                 </div>
-                                <div class="profile-field">
-                                    <div class="profile-field-label">Mother's Phone</div>
-                                    <div class="profile-field-value" id="profileMotherPhone">—</div>
-                                </div>
-                                <div class="profile-field full-width">
-                                    <div class="profile-field-label">Parent Education</div>
-                                    <div class="profile-field-value" id="profileParentEducation">—</div>
+                                <div class="profile-info-card__grid">
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Father's Name</div>
+                                        <div class="profile-info-item__value" id="profileFatherName">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Father's Phone</div>
+                                        <div class="profile-info-item__value" id="profileFatherPhone">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Mother's Name</div>
+                                        <div class="profile-info-item__value" id="profileMotherName">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Mother's Phone</div>
+                                        <div class="profile-info-item__value" id="profileMotherPhone">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Guardian Name</div>
+                                        <div class="profile-info-item__value" id="profileGuardian">—</div>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <div class="profile-info-item__label">Guardian Phone</div>
+                                        <div class="profile-info-item__value" id="profileGuardianPhone">—</div>
+                                    </div>
+                                    <div class="profile-info-item profile-info-item--full">
+                                        <div class="profile-info-item__label">Parent Education</div>
+                                        <div class="profile-info-item__value" id="profileParentEducation">—</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -168,19 +168,31 @@
                 sidebarAvatar.classList.remove('has-image');
             }
 
+            // Hero info
             document.getElementById('profileName').textContent = s.full_name;
-            document.getElementById('profileMeta').textContent = `Grade ${s.grade} • ${s.faculty}`;
+            document.getElementById('profileMeta').textContent = `Grade ${s.grade} • ${s.faculty} • Roll No: ${s.roll_no}`;
+
+            // Hero badges
+            document.getElementById('profileHeroPhone').textContent = `📞 ${s.phone || 'N/A'}`;
+            const dobFormatted = s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
+            document.getElementById('profileHeroDob').textContent = `📅 ${dobFormatted}`;
+            const enrollFormatted = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
+            document.getElementById('profileHeroEnrolled').textContent = `🎓 ${enrollFormatted}`;
+
+            // Academic info card
             document.getElementById('profileRoll').textContent = s.roll_no;
             document.getElementById('profileGrade').textContent = `Grade ${s.grade}`;
             document.getElementById('profileFaculty').textContent = s.faculty;
+            document.getElementById('profileEnrolled').textContent = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
+
+            // Personal info card
             document.getElementById('profilePhone').textContent = s.phone || '—';
             document.getElementById('profileDob').textContent = s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
-            document.getElementById('profileEnrolled').textContent = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
             document.getElementById('profileAddress').textContent = s.address || '—';
+
+            // Family info card
             document.getElementById('profileGuardian').textContent = s.guardian_name || '—';
             document.getElementById('profileGuardianPhone').textContent = s.guardian_phone || '—';
-
-            // Parent details
             document.getElementById('profileFatherName').textContent = s.father_name || '—';
             document.getElementById('profileFatherPhone').textContent = s.father_phone || '—';
             document.getElementById('profileMotherName').textContent = s.mother_name || '—';
