@@ -43,7 +43,7 @@
             document.getElementById(`page-${page}`).classList.remove('page-section-hidden');
             document.getElementById(`page-${page}`).classList.add('is-visible');
             document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
-            const titles = { overview:'Dashboard Overview', students:'Student Management', teachers:'Teacher Management', attendance:'Attendance Tracker', results:'Bulk Marks Entry', subjects:'Subject Management' };
+            const titles = { overview:'Dashboard Overview', students:'Student Management', teachers:'Teacher Management', attendance:'Attendance Tracker', results:'Bulk Marks Entry', subjects:'Subject Management', insight:'Academic Insight' };
             document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
             if (page === 'overview') loadDashboardStats();
             if (page === 'students') loadStudents();
@@ -490,4 +490,176 @@
 
         function resetImagePreview() {
             document.getElementById('sfImagePreview').innerHTML = '<span class="file-upload-placeholder">No image selected</span>';
+        }
+
+        // ============================================================
+        // ACADEMIC INSIGHT — Admin Prediction
+        // ============================================================
+        let adminTrendChart = null;
+
+        async function adminGeneratePrediction() {
+            const username = document.getElementById('adminInsightUsername').value.trim();
+            if (!username) { showToast('Please enter a student username', 'error'); return; }
+
+            const btn = document.getElementById('adminInsightBtn');
+            const btnText = document.getElementById('adminInsightBtnText');
+            const spinner = document.getElementById('adminInsightSpinner');
+            const errorEl = document.getElementById('adminInsightError');
+
+            btn.disabled = true;
+            btnText.textContent = 'Analyzing...';
+            spinner.style.display = 'inline-block';
+            errorEl.style.display = 'none';
+            document.getElementById('adminInsightResults').style.display = 'none';
+
+            try {
+                const data = await api.predictByUsername(username);
+                renderAdminPrediction(data);
+            } catch (e) {
+                errorEl.textContent = e.message || 'Student not found. Please check the username.';
+                errorEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Generate Prediction';
+                spinner.style.display = 'none';
+            }
+        }
+
+        function renderAdminPrediction(data) {
+            document.getElementById('adminInsightResults').style.display = 'block';
+
+            // Student banner
+            const si = data.student_info;
+            document.getElementById('adminStudentAvatar').textContent = si.full_name.charAt(0).toUpperCase();
+            document.getElementById('adminStudentName').textContent = si.full_name;
+            document.getElementById('adminStudentMeta').textContent = `Grade ${si.grade} • ${si.faculty} • Roll No: ${si.roll_no}`;
+
+            const gradeColors = {
+                'A': '#10b981', 'B': '#3b82f6', 'C': '#8b5cf6',
+                'D': '#f59e0b', 'E': '#ef4444', 'F': '#991b1b'
+            };
+            const grade = data.predicted_grade;
+            const color = gradeColors[grade] || '#8b5cf6';
+
+            // Top stats
+            const gradeEl = document.getElementById('adminInsightGrade');
+            gradeEl.textContent = grade;
+            gradeEl.style.color = color;
+            document.getElementById('adminInsightStatGrade').style.borderTopColor = color;
+
+            document.getElementById('adminInsightGPA').textContent = data.gpa.toFixed(2);
+            document.getElementById('adminInsightAccuracy').innerHTML = data.model_accuracy + '<small>%</small>';
+
+            const riskColors = { low: '#10b981', medium: '#f59e0b', high: '#ef4444' };
+            const riskEmojis = { low: '🛡️', medium: '⚠️', high: '🚨' };
+            document.getElementById('adminInsightRiskLabel').textContent = data.risk_label;
+            document.getElementById('adminInsightRiskLabel').style.color = riskColors[data.risk_level];
+            document.getElementById('adminInsightRiskEmoji').textContent = riskEmojis[data.risk_level] || '⚡';
+            document.getElementById('adminInsightRiskCard').style.borderTopColor = riskColors[data.risk_level];
+
+            // Chart
+            adminRenderTrendChart(data.exam_scores);
+
+            // Probability bars
+            adminRenderProbs(data.probabilities, grade);
+
+            // Features
+            adminRenderFeatures(data.input_features);
+
+            // Recommendations
+            adminRenderRecs(data);
+
+            document.getElementById('adminInsightResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function adminRenderTrendChart(examScores) {
+            const chartWrap = document.querySelector('#page-insight .insight-chart-wrap');
+            const chartEmpty = document.getElementById('adminChartEmpty');
+
+            if (!examScores || examScores.length === 0) {
+                chartWrap.style.display = 'none';
+                chartEmpty.style.display = 'flex';
+                return;
+            }
+            chartWrap.style.display = 'block';
+            chartEmpty.style.display = 'none';
+
+            const labels = examScores.map(e => e.subject);
+            const dataPoints = examScores.map(e => e.percentage);
+
+            if (adminTrendChart) adminTrendChart.destroy();
+
+            const ctx = document.getElementById('adminInsightChart').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(124, 45, 245, 0.25)');
+            gradient.addColorStop(1, 'rgba(124, 45, 245, 0.02)');
+
+            adminTrendChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Score %',
+                        data: dataPoints,
+                        backgroundColor: dataPoints.map(v => v >= 80 ? 'rgba(16,185,129,0.8)' : v >= 60 ? 'rgba(59,130,246,0.8)' : v >= 40 ? 'rgba(245,158,11,0.8)' : 'rgba(239,68,68,0.8)'),
+                        borderColor: dataPoints.map(v => v >= 80 ? '#10b981' : v >= 60 ? '#3b82f6' : v >= 40 ? '#f59e0b' : '#ef4444'),
+                        borderWidth: 2, borderRadius: 6,
+                    }, {
+                        label: 'Trend', data: dataPoints, type: 'line',
+                        borderColor: '#7c2df5', backgroundColor: gradient, fill: true, tension: 0.4,
+                        pointBackgroundColor: '#7c2df5', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(30,30,50,0.9)', padding: 12, cornerRadius: 8, callbacks: { label: (ctx) => { const e = examScores[ctx.dataIndex]; return `${e.marks}/${e.full_marks} (${e.percentage}%) — ${e.exam_type}`; } } } },
+                    scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false }, ticks: { maxRotation: 45 } } }
+                }
+            });
+        }
+
+        function adminRenderProbs(probs, predicted) {
+            const container = document.getElementById('adminInsightProbs');
+            const barColors = { 'A': '#10b981', 'B': '#3b82f6', 'C': '#8b5cf6', 'D': '#f59e0b', 'E': '#ef4444', 'F': '#991b1b' };
+            container.innerHTML = ['A','B','C','D','E','F'].map(g => {
+                const pct = probs[g] || 0;
+                const active = g === predicted;
+                return `<div class="insight-prob-row ${active ? 'insight-prob-active' : ''}"><div class="insight-prob-label"><span class="insight-prob-grade" style="color:${barColors[g]}">${g}</span>${active ? '<span class="insight-prob-predicted-tag">Predicted</span>' : ''}</div><div class="insight-prob-bar-track"><div class="insight-prob-bar-fill" style="width:0%;background:${barColors[g]}" data-width="${pct}"></div></div><div class="insight-prob-value">${pct.toFixed(1)}%</div></div>`;
+            }).join('');
+            setTimeout(() => { container.querySelectorAll('.insight-prob-bar-fill').forEach(b => { b.style.width = b.dataset.width + '%'; }); }, 100);
+        }
+
+        function adminRenderFeatures(f) {
+            const container = document.getElementById('adminInsightFeatures');
+            const cards = [
+                { icon: '📅', label: 'Attendance', value: f.attendance_percentage + '%', sub: `${f.total_attendance_records} days` },
+                { icon: '📝', label: 'Group I', value: f.optional_i_score + '%', sub: 'Avg score' },
+                { icon: '📝', label: 'Group II', value: f.optional_ii_score + '%', sub: 'Avg score' },
+                { icon: '📝', label: 'Group III', value: f.optional_iii_score + '%', sub: 'Avg score' },
+                { icon: '📊', label: 'Overall', value: f.overall_score + '%', sub: `${f.total_exam_results} exams` },
+                { icon: '🎓', label: 'Parent Edu', value: (f.parent_education || '—').replace(/\b\w/g, l => l.toUpperCase()), sub: 'Factor' },
+            ];
+            container.innerHTML = cards.map(c => `<div class="insight-feature-card"><div class="insight-feature-icon">${c.icon}</div><div class="insight-feature-value">${c.value}</div><div class="insight-feature-label">${c.label}</div><div class="insight-feature-sub">${c.sub}</div></div>`).join('');
+        }
+
+        function adminRenderRecs(data) {
+            const container = document.getElementById('adminInsightRecs');
+            const recs = [];
+            const f = data.input_features;
+            const grade = data.predicted_grade;
+
+            if (f.attendance_percentage < 75) recs.push({ type: 'warning', icon: '⚠️', title: 'Low Attendance', text: `Attendance is ${f.attendance_percentage}%. Needs improvement.` });
+            else if (f.attendance_percentage >= 90) recs.push({ type: 'success', icon: '✅', title: 'Great Attendance', text: `${f.attendance_percentage}% attendance rate.` });
+            else recs.push({ type: 'info', icon: '📌', title: 'Good Attendance', text: `${f.attendance_percentage}% attendance.` });
+
+            if (f.overall_score < 40) recs.push({ type: 'warning', icon: '📉', title: 'Low Scores', text: `Overall ${f.overall_score}%. Needs attention.` });
+            else if (f.overall_score >= 80) recs.push({ type: 'success', icon: '🌟', title: 'Strong Scores', text: `Overall ${f.overall_score}%.` });
+            else recs.push({ type: 'info', icon: '📚', title: 'Average Scores', text: `Overall ${f.overall_score}%.` });
+
+            if (f.total_exam_results === 0) recs.push({ type: 'warning', icon: '📋', title: 'No Exam Data', text: 'Using default values.' });
+            if (f.total_attendance_records < 10) recs.push({ type: 'info', icon: '📆', title: 'Limited Data', text: `Only ${f.total_attendance_records} records.` });
+            if (grade === 'E' || grade === 'F') recs.push({ type: 'warning', icon: '🚨', title: 'Academic Alert', text: 'Student at risk of failing.' });
+            else if (grade === 'A') recs.push({ type: 'success', icon: '🏆', title: 'Top Performer', text: 'Predicted highest grade.' });
+
+            container.innerHTML = recs.map(r => `<div class="insight-rec insight-rec-${r.type}"><div class="insight-rec-icon">${r.icon}</div><div class="insight-rec-body"><div class="insight-rec-title">${r.title}</div><div class="insight-rec-text">${r.text}</div></div></div>`).join('');
         }

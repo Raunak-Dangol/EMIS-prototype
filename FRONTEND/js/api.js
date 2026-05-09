@@ -188,5 +188,14 @@ const api = {
             method: 'PUT',
             body: JSON.stringify(data)
         });
+    },
+
+    // Performance Prediction
+    predictStudentPerformance(studentId) {
+        return this.request(`/api/predict/student/${studentId}`);
+    },
+
+    predictByUsername(username) {
+        return this.request(`/api/predict/username/${username}`);
     }
 };

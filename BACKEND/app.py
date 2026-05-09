@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 
 from database import db, init_db
 from models import User, Student, Teacher, Subject, Attendance, ExamResult
+from predictor import predict_grade, get_model
 
 # ---------------------------------------------------------------------------
 # App Configuration
@@ -750,6 +751,120 @@ def add_bulk_results():
 
     db.session.commit()
     return jsonify({'message': f'Results saved: {created} new, {updated} updated'}), 200
+
+
+# ---------------------------------------------------------------------------
+# Performance Prediction API
+# ---------------------------------------------------------------------------
+
+def _build_prediction_response(student):
+    """Shared helper: build full prediction payload for a student."""
+
+    # --- Attendance percentage ---
+    total_att = student.attendances.count()
+    present_att = student.attendances.filter_by(status='Present').count()
+    late_att = student.attendances.filter_by(status='Late').count()
+    attendance_pct = round((present_att + late_att) / total_att * 100, 2) if total_att > 0 else 75.0
+
+    # --- Exam scores ---
+    results = ExamResult.query.filter_by(student_id=student.id).all()
+    if results:
+        percentages = [round((r.marks_obtained / r.full_marks) * 100, 2) if r.full_marks else 0 for r in results]
+        overall_score = round(sum(percentages) / len(percentages), 2)
+        n = len(percentages)
+        chunk = max(1, n // 3)
+        opt1 = round(sum(percentages[:chunk]) / len(percentages[:chunk]), 2)
+        opt2 = round(sum(percentages[chunk:2*chunk]) / len(percentages[chunk:2*chunk]), 2) if n > chunk else opt1
+        opt3 = round(sum(percentages[2*chunk:]) / len(percentages[2*chunk:]), 2) if n > 2*chunk else opt2
+    else:
+        opt1 = opt2 = opt3 = overall_score = 50.0
+
+    parent_edu = student.parent_education or 'high school'
+
+    prediction = predict_grade(
+        attendance_pct=attendance_pct, opt1=opt1, opt2=opt2, opt3=opt3,
+        overall=overall_score, parent_edu_str=parent_edu,
+    )
+
+    # --- GPA (NEB 4.0 scale from predicted grade) ---
+    gpa_map = {'A': 3.6, 'B': 3.2, 'C': 2.8, 'D': 2.4, 'E': 1.6, 'F': 0.0}
+    predicted_gpa = gpa_map.get(prediction['predicted_grade'], 0.0)
+
+    # --- Risk level ---
+    grade = prediction['predicted_grade']
+    if grade in ('A', 'B'):
+        risk_level = 'low'
+        risk_label = 'Low Risk'
+    elif grade in ('C', 'D'):
+        risk_level = 'medium'
+        risk_label = 'Medium Risk'
+    else:
+        risk_level = 'high'
+        risk_label = 'High Risk'
+
+    # --- Per-exam score breakdown (for trend chart) ---
+    exam_scores = []
+    for r in (results or []):
+        exam_scores.append({
+            'subject': r.subject.name if r.subject else 'Unknown',
+            'exam_type': r.exam_type,
+            'percentage': round((r.marks_obtained / r.full_marks) * 100, 2) if r.full_marks else 0,
+            'marks': r.marks_obtained,
+            'full_marks': r.full_marks,
+        })
+
+    prediction['gpa'] = predicted_gpa
+    prediction['risk_level'] = risk_level
+    prediction['risk_label'] = risk_label
+
+    prediction['student_info'] = {
+        'id': student.id,
+        'full_name': f"{student.first_name} {student.last_name}",
+        'grade': student.grade,
+        'faculty': student.faculty,
+        'roll_no': student.roll_no,
+    }
+
+    prediction['input_features'] = {
+        'attendance_percentage': attendance_pct,
+        'optional_i_score': opt1,
+        'optional_ii_score': opt2,
+        'optional_iii_score': opt3,
+        'overall_score': overall_score,
+        'parent_education': parent_edu,
+        'total_attendance_records': total_att,
+        'total_exam_results': len(results) if results else 0,
+    }
+
+    prediction['exam_scores'] = exam_scores
+    return prediction
+
+
+@app.route('/api/predict/student/<int:student_id>', methods=['GET'])
+@login_required
+def predict_student_performance(student_id):
+    """Predict by student ID (used by student dashboard)."""
+    if session.get('role') == 'student':
+        user = User.query.get(session['user_id'])
+        if not user.student_profile or user.student_profile.id != student_id:
+            return jsonify({'error': 'Access denied'}), 403
+
+    student = Student.query.get_or_404(student_id)
+    return jsonify(_build_prediction_response(student)), 200
+
+
+@app.route('/api/predict/username/<username>', methods=['GET'])
+@login_required
+def predict_by_username(username):
+    """Predict by username (used by admin dashboard)."""
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+
+    user = User.query.filter_by(username=username, role='student').first()
+    if not user or not user.student_profile:
+        return jsonify({'error': f'Student "{username}" not found'}), 404
+
+    return jsonify(_build_prediction_response(user.student_profile)), 200
 
 
 # ---------------------------------------------------------------------------

@@ -6,6 +6,7 @@
     <meta name="description" content="NCCS EMIS Admin Dashboard — Manage students, teachers, attendance, and exam results">
     <title>NCCS EMIS — Admin Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -42,6 +43,9 @@
                 </div>
                 <div class="nav-item" data-page="subjects" onclick="switchPage('subjects')">
                     <span class="nav-icon"></span> Subjects
+                </div>
+                <div class="nav-item" data-page="insight" onclick="switchPage('insight')">
+                    <span class="nav-icon"></span> Academic Insight
                 </div>
             </nav>
 
@@ -307,6 +311,100 @@
                                 <tr><td colspan="7" class="empty-state"><div class="empty-icon"></div><p>No subjects found</p></td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: ACADEMIC INSIGHT (Admin) ===== -->
+                <section id="page-insight" class="page-section-hidden">
+                    <!-- Search Bar -->
+                    <div class="insight-admin-search">
+                        <div class="insight-search-card">
+                            <div class="insight-search-icon">🔍</div>
+                            <h3>Student Performance Prediction</h3>
+                            <p>Enter a student's username to generate their AI-powered grade prediction</p>
+                            <div class="insight-search-row">
+                                <input type="text" id="adminInsightUsername" class="insight-search-input" placeholder="Enter student username..." onkeydown="if(event.key==='Enter') adminGeneratePrediction()">
+                                <button class="btn btn-primary" id="adminInsightBtn" onclick="adminGeneratePrediction()">
+                                    <span id="adminInsightBtnText">Generate Prediction</span>
+                                    <span id="adminInsightSpinner" class="insight-spinner" style="display:none;"></span>
+                                </button>
+                            </div>
+                            <div class="insight-search-error" id="adminInsightError" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Results (hidden until loaded) -->
+                    <div id="adminInsightResults" style="display:none;">
+                        <!-- Student Info Banner -->
+                        <div class="insight-student-banner" id="adminStudentBanner">
+                            <div class="insight-student-avatar" id="adminStudentAvatar">S</div>
+                            <div class="insight-student-details">
+                                <div class="insight-student-name" id="adminStudentName">—</div>
+                                <div class="insight-student-meta" id="adminStudentMeta">—</div>
+                            </div>
+                        </div>
+
+                        <!-- Top Stats -->
+                        <div class="insight-top-stats">
+                            <div class="insight-stat-card insight-stat-grade" id="adminInsightStatGrade">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">🎯</span></div>
+                                <div class="insight-stat-value" id="adminInsightGrade">—</div>
+                                <div class="insight-stat-label">Predicted Grade</div>
+                            </div>
+                            <div class="insight-stat-card insight-stat-gpa">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">📊</span></div>
+                                <div class="insight-stat-value" id="adminInsightGPA">—</div>
+                                <div class="insight-stat-label">Predicted GPA</div>
+                            </div>
+                            <div class="insight-stat-card" id="adminInsightRiskCard">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji" id="adminInsightRiskEmoji">⚡</span></div>
+                                <div class="insight-stat-value" id="adminInsightRiskLabel">—</div>
+                                <div class="insight-stat-label">Risk Level</div>
+                            </div>
+                            <div class="insight-stat-card">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">🤖</span></div>
+                                <div class="insight-stat-value" id="adminInsightAccuracy">—<small>%</small></div>
+                                <div class="insight-stat-label">Model Accuracy</div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Trend Chart -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">📈 Performance Trend</span>
+                            </div>
+                            <div class="insight-chart-wrap">
+                                <canvas id="adminInsightChart"></canvas>
+                            </div>
+                            <div class="insight-chart-empty" id="adminChartEmpty" style="display:none;">
+                                <div class="empty-icon">📝</div>
+                                <p>No exam results recorded for this student yet.</p>
+                            </div>
+                        </div>
+
+                        <!-- Probability Distribution -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">📊 Grade Probability Distribution</span>
+                            </div>
+                            <div class="insight-probs-container" id="adminInsightProbs"></div>
+                        </div>
+
+                        <!-- Input Features -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">🔍 Data Used for Prediction</span>
+                            </div>
+                            <div class="insight-features-grid" id="adminInsightFeatures"></div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">💡 Recommendations</span>
+                            </div>
+                            <div class="insight-recommendations" id="adminInsightRecs"></div>
+                        </div>
                     </div>
                 </section>
             </div>

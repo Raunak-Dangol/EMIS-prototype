@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/calendar.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -33,6 +34,9 @@
                 </div>
                 <div class="nav-item" data-page="results" onclick="switchPage('results')">
                     <span class="nav-icon"></span>  Results
+                </div>
+                <div class="nav-item" data-page="insight" onclick="switchPage('insight')">
+                    <span class="nav-icon"></span>  Academic Insight
                 </div>
                 <div class="nav-item" data-page="profile" onclick="switchPage('profile')">
                     <span class="nav-icon"></span>  Profile
@@ -118,26 +122,134 @@
 
                 <!-- ===== PAGE: RESULTS ===== -->
                 <section id="page-results" class="page-section-hidden">
-                    <div class="data-panel">
+                    <!-- Exam Type Filter Tabs -->
+                    <div class="results-filter-bar" id="resultsFilterBar">
+                        <div class="results-filter-label">Exam Type</div>
+                        <div class="results-tabs" id="examTypeTabs">
+                            <!-- Tabs populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Summary Stats -->
+                    <div class="results-summary-grid" id="resultsSummaryGrid">
+                        <div class="results-summary-card">
+                            <div class="results-summary-icon">📚</div>
+                            <div class="results-summary-value" id="rsTotalSubjects">—</div>
+                            <div class="results-summary-label">Total Subjects</div>
+                        </div>
+                        <div class="results-summary-card">
+                            <div class="results-summary-icon">📊</div>
+                            <div class="results-summary-value" id="rsAvgPercentage">—</div>
+                            <div class="results-summary-label">Average %</div>
+                        </div>
+                        <div class="results-summary-card">
+                            <div class="results-summary-icon">🏆</div>
+                            <div class="results-summary-value" id="rsHighestScore">—</div>
+                            <div class="results-summary-label">Highest Score</div>
+                        </div>
+                        <div class="results-summary-card">
+                            <div class="results-summary-icon">📈</div>
+                            <div class="results-summary-value" id="rsGPA">—</div>
+                            <div class="results-summary-label">GPA</div>
+                        </div>
+                    </div>
+
+                    <!-- Results Table -->
+                    <div class="data-panel" id="resultsTablePanel">
                         <div class="panel-header">
-                            <span class="panel-title">All Exam Results</span>
+                            <span class="panel-title" id="resultsTableTitle">Select an exam type</span>
+                            <span class="results-count-badge" id="resultsCountBadge"></span>
                         </div>
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Subject</th>
-                                    <th>Subject Code</th>
-                                    <th>Exam Type</th>
+                                    <th>Code</th>
                                     <th>Marks</th>
                                     <th>Full Marks</th>
                                     <th>Grade</th>
                                     <th>Percentage</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="allResultsBody">
-                                <tr><td colspan="7" class="empty-state"><div class="empty-icon"></div><p>No exam results yet</p></td></tr>
+                                <tr><td colspan="7" class="empty-state"><div class="empty-icon"></div><p>Select an exam type above to view results</p></td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: ACADEMIC INSIGHT (Prediction) ===== -->
+                <section id="page-insight" class="page-section-hidden">
+                    <!-- Loading state -->
+                    <div class="insight-loading" id="insightLoading">
+                        <div class="insight-spinner-lg"></div>
+                        <p>Analyzing your academic data...</p>
+                    </div>
+
+                    <!-- Prediction Results (shown after load) -->
+                    <div id="insightResults" style="display:none;">
+                        <!-- Top Stats Row: Grade + GPA + Risk -->
+                        <div class="insight-top-stats">
+                            <div class="insight-stat-card insight-stat-grade" id="insightStatGrade">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">🎯</span></div>
+                                <div class="insight-stat-value" id="insightGradeLetter">—</div>
+                                <div class="insight-stat-label">Predicted Grade</div>
+                            </div>
+                            <div class="insight-stat-card insight-stat-gpa">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">📊</span></div>
+                                <div class="insight-stat-value" id="insightGPA">—</div>
+                                <div class="insight-stat-label">Predicted GPA</div>
+                            </div>
+                            <div class="insight-stat-card" id="insightRiskCard">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji" id="insightRiskEmoji">⚡</span></div>
+                                <div class="insight-stat-value" id="insightRiskLabel">—</div>
+                                <div class="insight-stat-label">Risk Level</div>
+                            </div>
+                            <div class="insight-stat-card">
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">🤖</span></div>
+                                <div class="insight-stat-value" id="insightAccuracy">—<small>%</small></div>
+                                <div class="insight-stat-label">Model Accuracy</div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Trend Chart -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">📈 Performance Trend</span>
+                            </div>
+                            <div class="insight-chart-wrap">
+                                <canvas id="insightTrendChart"></canvas>
+                            </div>
+                            <div class="insight-chart-empty" id="insightChartEmpty" style="display:none;">
+                                <div class="empty-icon">📝</div>
+                                <p>No exam results yet. Your performance trend will appear here once exams are graded.</p>
+                            </div>
+                        </div>
+
+                        <!-- Probability Distribution -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">📊 Grade Probability Distribution</span>
+                            </div>
+                            <div class="insight-probs-container" id="insightProbsContainer"></div>
+                        </div>
+
+                        <!-- Input Features Used -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">🔍 Data Used for Prediction</span>
+                            </div>
+                            <div class="insight-features-grid" id="insightFeaturesGrid"></div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="data-panel mb-24">
+                            <div class="panel-header">
+                                <span class="panel-title">💡 Recommendations</span>
+                            </div>
+                            <div class="insight-recommendations" id="insightRecommendations"></div>
+                        </div>
                     </div>
                 </section>
 
