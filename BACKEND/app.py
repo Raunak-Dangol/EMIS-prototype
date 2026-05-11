@@ -175,6 +175,17 @@ def admin_dashboard_stats():
     management = Student.query.filter_by(faculty='Management').count()
     humanities = Student.query.filter_by(faculty='Humanities').count()
 
+    # Attendance Trend (Last 7 Days)
+    from datetime import timedelta
+    attendance_trend = []
+    for i in range(6, -1, -1):
+        d = today - timedelta(days=i)
+        records = Attendance.query.filter_by(date=d).all()
+        total_records = len(records)
+        present = sum(1 for r in records if r.status in ['Present', 'Late'])
+        rate = round((present / total_records * 100), 1) if total_records > 0 else 0
+        attendance_trend.append({'date': d.strftime('%a'), 'rate': rate})
+
     return jsonify({
         'total_students': total_students,
         'grade_11': grade_11,
@@ -190,7 +201,8 @@ def admin_dashboard_stats():
             'science': science,
             'management': management,
             'humanities': humanities
-        }
+        },
+        'attendance_trend': attendance_trend
     }), 200
 
 

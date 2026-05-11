@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="NCCS EMIS Admin Dashboard — Manage students, teachers, attendance, and exam results">
-    <title>NCCS EMIS — Admin Dashboard</title>
+    <meta name="description" content="NCCS EMIS Admin Dashboard  Manage students, teachers, attendance, and exam results">
+    <title>NCCS EMIS  Admin Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -78,39 +78,39 @@
                 <section id="page-overview">
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-value" id="statTotalStudents">—</div>
+                            <div class="stat-value" id="statTotalStudents"></div>
                             <div class="stat-label">Total Students</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="statTotalTeachers">—</div>
+                            <div class="stat-value" id="statTotalTeachers"></div>
                             <div class="stat-label">Total Teachers</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="statAttendanceRate">—</div>
+                            <div class="stat-value" id="statAttendanceRate"></div>
                             <div class="stat-label">Today's Attendance</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="statGrade11">—</div>
+                            <div class="stat-value" id="statGrade11"></div>
                             <div class="stat-label">Grade 11</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="statGrade12">—</div>
+                            <div class="stat-value" id="statGrade12"></div>
                             <div class="stat-label">Grade 12</div>
                         </div>
                     </div>
 
-                    <div class="stats-grid stats-grid-auto-200">
-                        <div class="stat-card">
-                            <div class="stat-value" id="statScience">—</div>
-                            <div class="stat-label">Science</div>
+                    <div class="dashboard-charts-grid">
+                        <div class="data-panel">
+                            <div class="panel-header"><span class="panel-title"> Faculty Distribution</span></div>
+                            <div class="chart-container" style="height: 250px;">
+                                <canvas id="facultyChart"></canvas>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statManagement">—</div>
-                            <div class="stat-label">Management</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statHumanities">—</div>
-                            <div class="stat-label">Humanities</div>
+                        <div class="data-panel">
+                            <div class="panel-header"><span class="panel-title">Attendance Trend (Last 7 Days)</span></div>
+                            <div class="chart-container" style="height: 250px;">
+                                <canvas id="attendanceTrendChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -319,7 +319,9 @@
                     <!-- Search Bar -->
                     <div class="insight-admin-search">
                         <div class="insight-search-card">
-                            <div class="insight-search-icon">🔍</div>
+                            <div class="insight-search-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </div>
                             <h3>Student Performance Prediction</h3>
                             <p>Enter a student's username to generate their AI-powered grade prediction</p>
                             <div class="insight-search-row">
@@ -339,31 +341,31 @@
                         <div class="insight-student-banner" id="adminStudentBanner">
                             <div class="insight-student-avatar" id="adminStudentAvatar">S</div>
                             <div class="insight-student-details">
-                                <div class="insight-student-name" id="adminStudentName">—</div>
-                                <div class="insight-student-meta" id="adminStudentMeta">—</div>
+                                <div class="insight-student-name" id="adminStudentName"></div>
+                                <div class="insight-student-meta" id="adminStudentMeta"></div>
                             </div>
                         </div>
 
                         <!-- Top Stats -->
                         <div class="insight-top-stats">
                             <div class="insight-stat-card insight-stat-grade" id="adminInsightStatGrade">
-                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">🎯</span></div>
-                                <div class="insight-stat-value" id="adminInsightGrade">—</div>
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji"></span></div>
+                                <div class="insight-stat-value" id="adminInsightGrade"></div>
                                 <div class="insight-stat-label">Predicted Grade</div>
                             </div>
                             <div class="insight-stat-card insight-stat-gpa">
-                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">📊</span></div>
-                                <div class="insight-stat-value" id="adminInsightGPA">—</div>
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji"></span></div>
+                                <div class="insight-stat-value" id="adminInsightGPA"></div>
                                 <div class="insight-stat-label">Predicted GPA</div>
                             </div>
                             <div class="insight-stat-card" id="adminInsightRiskCard">
-                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji" id="adminInsightRiskEmoji">⚡</span></div>
-                                <div class="insight-stat-value" id="adminInsightRiskLabel">—</div>
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji" id="adminInsightRiskEmoji"></span></div>
+                                <div class="insight-stat-value" id="adminInsightRiskLabel"></div>
                                 <div class="insight-stat-label">Risk Level</div>
                             </div>
                             <div class="insight-stat-card">
-                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji">🤖</span></div>
-                                <div class="insight-stat-value" id="adminInsightAccuracy">—<small>%</small></div>
+                                <div class="insight-stat-icon-wrap"><span class="insight-stat-emoji"></span></div>
+                                <div class="insight-stat-value" id="adminInsightAccuracy"><small>%</small></div>
                                 <div class="insight-stat-label">Model Accuracy</div>
                             </div>
                         </div>
@@ -371,13 +373,13 @@
                         <!-- Performance Trend Chart -->
                         <div class="data-panel mb-24">
                             <div class="panel-header">
-                                <span class="panel-title">📈 Performance Trend</span>
+                                <span class="panel-title"> Performance Trend</span>
                             </div>
                             <div class="insight-chart-wrap">
                                 <canvas id="adminInsightChart"></canvas>
                             </div>
                             <div class="insight-chart-empty" id="adminChartEmpty" style="display:none;">
-                                <div class="empty-icon">📝</div>
+                                <div class="empty-icon"></div>
                                 <p>No exam results recorded for this student yet.</p>
                             </div>
                         </div>
@@ -385,7 +387,7 @@
                         <!-- Probability Distribution -->
                         <div class="data-panel mb-24">
                             <div class="panel-header">
-                                <span class="panel-title">📊 Grade Probability Distribution</span>
+                                <span class="panel-title"> Grade Probability Distribution</span>
                             </div>
                             <div class="insight-probs-container" id="adminInsightProbs"></div>
                         </div>
@@ -393,7 +395,7 @@
                         <!-- Input Features -->
                         <div class="data-panel mb-24">
                             <div class="panel-header">
-                                <span class="panel-title">🔍 Data Used for Prediction</span>
+                                <span class="panel-title"> Data Used for Prediction</span>
                             </div>
                             <div class="insight-features-grid" id="adminInsightFeatures"></div>
                         </div>
@@ -401,7 +403,7 @@
                         <!-- Recommendations -->
                         <div class="data-panel mb-24">
                             <div class="panel-header">
-                                <span class="panel-title">💡 Recommendations</span>
+                                <span class="panel-title"> Recommendations</span>
                             </div>
                             <div class="insight-recommendations" id="adminInsightRecs"></div>
                         </div>

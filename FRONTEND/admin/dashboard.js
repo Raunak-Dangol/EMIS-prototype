@@ -1,4 +1,4 @@
-        // ============================================================
+﻿        // ============================================================
         // STATE
         // ============================================================
         let currentUser = null;
@@ -56,6 +56,8 @@
         // ============================================================
         // DASHBOARD STATS
         // ============================================================
+        let facChart = null;
+        let attChart = null;
         async function loadDashboardStats() {
             try {
                 const stats = await api.getAdminStats();
@@ -64,10 +66,75 @@
                 document.getElementById('statAttendanceRate').textContent = stats.attendance.rate + '%';
                 document.getElementById('statGrade11').textContent = stats.grade_11;
                 document.getElementById('statGrade12').textContent = stats.grade_12;
-                document.getElementById('statScience').textContent = stats.faculty.science;
-                document.getElementById('statManagement').textContent = stats.faculty.management;
-                document.getElementById('statHumanities').textContent = stats.faculty.humanities;
+
+                renderOverviewCharts(stats);
             } catch (e) { showToast('Failed to load stats', 'error'); }
+        }
+
+        function renderOverviewCharts(stats) {
+            // 1. Faculty Doughnut Chart
+            if (facChart) facChart.destroy();
+            const ctxFac = document.getElementById('facultyChart').getContext('2d');
+            facChart = new Chart(ctxFac, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Science', 'Management', 'Humanities'],
+                    datasets: [{
+                        data: [stats.faculty.science, stats.faculty.management, stats.faculty.humanities],
+                        backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 12 }, padding: 20 } }
+                    }
+                }
+            });
+
+            // 2. Attendance Trend Line Chart
+            if (attChart) attChart.destroy();
+            const ctxAtt = document.getElementById('attendanceTrendChart').getContext('2d');
+            
+            const attLabels = stats.attendance_trend.map(d => d.date);
+            const attData = stats.attendance_trend.map(d => d.rate);
+            
+            const gradientAtt = ctxAtt.createLinearGradient(0, 0, 0, 250);
+            gradientAtt.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+            gradientAtt.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+            attChart = new Chart(ctxAtt, {
+                type: 'line',
+                data: {
+                    labels: attLabels,
+                    datasets: [{
+                        label: 'Attendance Rate (%)',
+                        data: attData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: gradientAtt,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 50, max: 100, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
         }
 
         // ============================================================
@@ -88,7 +155,7 @@
                     <td><strong>${s.roll_no}</strong></td><td>${s.full_name}</td>
                     <td><span class="badge badge-grade-${s.grade}">Grade ${s.grade}</span></td>
                     <td><span class="badge badge-${s.faculty.toLowerCase()}">${s.faculty}</span></td>
-                    <td>${s.phone || '—'}</td>
+                    <td>${s.phone || '-'}</td>
                     <td class="row-actions"><button onclick="editStudent(${s.id})" title="Edit">Edit</button><button class="delete" onclick="deleteStudent(${s.id}, '${s.full_name}')" title="Delete">Delete</button></td>
                 </tr>`).join('');
             } catch (e) { showToast('Failed to load students', 'error'); }
@@ -185,8 +252,8 @@
                 if (allTeachers.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon"></div><p>No teachers found. Add your first teacher!</p></td></tr>'; return; }
                 tbody.innerHTML = allTeachers.map(t => `<tr>
                     <td><strong>${t.full_name}</strong></td>
-                    <td>${t.department || '—'}</td>
-                    <td>${t.phone || '—'}</td>
+                    <td>${t.department || '-'}</td>
+                    <td>${t.phone || '-'}</td>
                     <td><span class="badge badge-management">${t.subject_count} subjects</span></td>
                     <td class="row-actions"><button onclick="editTeacher(${t.id})" title="Edit">Edit</button><button class="delete" onclick="deleteTeacher(${t.id}, '${t.full_name}')" title="Delete">Delete</button></td>
                 </tr>`).join('');
@@ -245,7 +312,7 @@
                 if (students.length === 0) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon"></div><p>No students</p></div>'; return; }
                 grid.innerHTML = students.map(s => {
                     const status = existingAtt[s.id] || 'Present'; attendanceData[s.id] = status;
-                    return `<div class="attendance-item" id="att-${s.id}"><div class="student-info"><div><strong>${s.full_name}</strong><div class="student-roll">${s.roll_no} • ${s.faculty}</div></div></div><div class="status-toggle"><button class="status-btn ${status==='Present'?'active-present':''}" onclick="setStatus(${s.id},'Present')">P</button><button class="status-btn ${status==='Late'?'active-late':''}" onclick="setStatus(${s.id},'Late')">L</button><button class="status-btn ${status==='Absent'?'active-absent':''}" onclick="setStatus(${s.id},'Absent')">A</button></div></div>`;
+                    return `<div class="attendance-item" id="att-${s.id}"><div class="student-info"><div><strong>${s.full_name}</strong><div class="student-roll">${s.roll_no} | ${s.faculty}</div></div></div><div class="status-toggle"><button class="status-btn ${status==='Present'?'active-present':''}" onclick="setStatus(${s.id},'Present')">P</button><button class="status-btn ${status==='Late'?'active-late':''}" onclick="setStatus(${s.id},'Late')">L</button><button class="status-btn ${status==='Absent'?'active-absent':''}" onclick="setStatus(${s.id},'Absent')">A</button></div></div>`;
                 }).join('');
             } catch (e) { showToast('Failed', 'error'); }
         }
@@ -400,7 +467,7 @@
                     <td><strong>${s.code}</strong></td><td>${s.name}</td>
                     <td><span class="badge badge-grade-${s.grade}">Grade ${s.grade}</span></td>
                     <td><span class="badge badge-${s.faculty.toLowerCase()}">${s.faculty}</span></td>
-                    <td>${s.teacher_name ? `<span class="teacher-assigned">${s.teacher_name}</span>` : `<button class="btn btn-secondary btn-sm" onclick="openAssignTeacher(${s.id}, '${s.name} (${s.code})')">​Assign</button>`}</td>
+                    <td>${s.teacher_name ? `<span class="teacher-assigned">${s.teacher_name}</span>` : `<button class="btn btn-secondary btn-sm" onclick="openAssignTeacher(${s.id}, '${s.name} (${s.code})')">Assign</button>`}</td>
                     <td>${s.full_marks} / ${s.pass_marks}</td>
                     <td class="row-actions">
                         ${s.teacher_name ? `<button onclick="openAssignTeacher(${s.id}, '${s.name} (${s.code})')" title="Reassign Teacher">Reassign</button>` : ''}
@@ -435,7 +502,7 @@
             document.getElementById('assignSubjectId').value = subjectId;
             document.getElementById('assignSubjectInfo').textContent = `Assign a teacher to: ${subjectInfo}`;
             const sel = document.getElementById('assignTeacherSelect');
-            sel.innerHTML = '<option value="">None (Unassign)</option>' + allTeachers.map(t => `<option value="${t.id}">${t.full_name} — ${t.department || 'No dept'}</option>`).join('');
+            sel.innerHTML = '<option value="">None (Unassign)</option>' + allTeachers.map(t => `<option value="${t.id}">${t.full_name} - ${t.department || 'No dept'}</option>`).join('');
             openModal('assignTeacherModal');
         }
 
@@ -493,7 +560,7 @@
         }
 
         // ============================================================
-        // ACADEMIC INSIGHT — Admin Prediction
+        // ACADEMIC INSIGHT - Admin Prediction
         // ============================================================
         let adminTrendChart = null;
 
@@ -532,7 +599,7 @@
             const si = data.student_info;
             document.getElementById('adminStudentAvatar').textContent = si.full_name.charAt(0).toUpperCase();
             document.getElementById('adminStudentName').textContent = si.full_name;
-            document.getElementById('adminStudentMeta').textContent = `Grade ${si.grade} • ${si.faculty} • Roll No: ${si.roll_no}`;
+            document.getElementById('adminStudentMeta').textContent = `Grade ${si.grade} | ${si.faculty} | Roll No: ${si.roll_no}`;
 
             const gradeColors = {
                 'A': '#10b981', 'B': '#3b82f6', 'C': '#8b5cf6',
@@ -551,10 +618,10 @@
             document.getElementById('adminInsightAccuracy').innerHTML = data.model_accuracy + '<small>%</small>';
 
             const riskColors = { low: '#10b981', medium: '#f59e0b', high: '#ef4444' };
-            const riskEmojis = { low: '🛡️', medium: '⚠️', high: '🚨' };
+            const riskEmojis = { low: '', medium: '', high: '' };
             document.getElementById('adminInsightRiskLabel').textContent = data.risk_label;
             document.getElementById('adminInsightRiskLabel').style.color = riskColors[data.risk_level];
-            document.getElementById('adminInsightRiskEmoji').textContent = riskEmojis[data.risk_level] || '⚡';
+            document.getElementById('adminInsightRiskEmoji').textContent = riskEmojis[data.risk_level] || '';
             document.getElementById('adminInsightRiskCard').style.borderTopColor = riskColors[data.risk_level];
 
             // Chart
@@ -612,7 +679,7 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(30,30,50,0.9)', padding: 12, cornerRadius: 8, callbacks: { label: (ctx) => { const e = examScores[ctx.dataIndex]; return `${e.marks}/${e.full_marks} (${e.percentage}%) — ${e.exam_type}`; } } } },
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(30,30,50,0.9)', padding: 12, cornerRadius: 8, callbacks: { label: (ctx) => { const e = examScores[ctx.dataIndex]; return `${e.marks}/${e.full_marks} (${e.percentage}%) - ${e.exam_type}`; } } } },
                     scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false }, ticks: { maxRotation: 45 } } }
                 }
             });
@@ -632,12 +699,12 @@
         function adminRenderFeatures(f) {
             const container = document.getElementById('adminInsightFeatures');
             const cards = [
-                { icon: '📅', label: 'Attendance', value: f.attendance_percentage + '%', sub: `${f.total_attendance_records} days` },
-                { icon: '📝', label: 'Group I', value: f.optional_i_score + '%', sub: 'Avg score' },
-                { icon: '📝', label: 'Group II', value: f.optional_ii_score + '%', sub: 'Avg score' },
-                { icon: '📝', label: 'Group III', value: f.optional_iii_score + '%', sub: 'Avg score' },
-                { icon: '📊', label: 'Overall', value: f.overall_score + '%', sub: `${f.total_exam_results} exams` },
-                { icon: '🎓', label: 'Parent Edu', value: (f.parent_education || '—').replace(/\b\w/g, l => l.toUpperCase()), sub: 'Factor' },
+                { icon: '', label: 'Attendance', value: f.attendance_percentage + '%', sub: `${f.total_attendance_records} days` },
+                { icon: '', label: 'Group I', value: f.optional_i_score + '%', sub: 'Avg score' },
+                { icon: '', label: 'Group II', value: f.optional_ii_score + '%', sub: 'Avg score' },
+                { icon: '', label: 'Group III', value: f.optional_iii_score + '%', sub: 'Avg score' },
+                { icon: '', label: 'Overall', value: f.overall_score + '%', sub: `${f.total_exam_results} exams` },
+                { icon: '', label: 'Parent Edu', value: (f.parent_education || '-').replace(/\b\w/g, l => l.toUpperCase()), sub: 'Factor' },
             ];
             container.innerHTML = cards.map(c => `<div class="insight-feature-card"><div class="insight-feature-icon">${c.icon}</div><div class="insight-feature-value">${c.value}</div><div class="insight-feature-label">${c.label}</div><div class="insight-feature-sub">${c.sub}</div></div>`).join('');
         }
@@ -648,18 +715,18 @@
             const f = data.input_features;
             const grade = data.predicted_grade;
 
-            if (f.attendance_percentage < 75) recs.push({ type: 'warning', icon: '⚠️', title: 'Low Attendance', text: `Attendance is ${f.attendance_percentage}%. Needs improvement.` });
-            else if (f.attendance_percentage >= 90) recs.push({ type: 'success', icon: '✅', title: 'Great Attendance', text: `${f.attendance_percentage}% attendance rate.` });
-            else recs.push({ type: 'info', icon: '📌', title: 'Good Attendance', text: `${f.attendance_percentage}% attendance.` });
+            if (f.attendance_percentage < 75) recs.push({ type: 'warning', icon: '', title: 'Low Attendance', text: `Attendance is ${f.attendance_percentage}%. Needs improvement.` });
+            else if (f.attendance_percentage >= 90) recs.push({ type: 'success', icon: '', title: 'Great Attendance', text: `${f.attendance_percentage}% attendance rate.` });
+            else recs.push({ type: 'info', icon: '', title: 'Good Attendance', text: `${f.attendance_percentage}% attendance.` });
 
-            if (f.overall_score < 40) recs.push({ type: 'warning', icon: '📉', title: 'Low Scores', text: `Overall ${f.overall_score}%. Needs attention.` });
-            else if (f.overall_score >= 80) recs.push({ type: 'success', icon: '🌟', title: 'Strong Scores', text: `Overall ${f.overall_score}%.` });
-            else recs.push({ type: 'info', icon: '📚', title: 'Average Scores', text: `Overall ${f.overall_score}%.` });
+            if (f.overall_score < 40) recs.push({ type: 'warning', icon: '', title: 'Low Scores', text: `Overall ${f.overall_score}%. Needs attention.` });
+            else if (f.overall_score >= 80) recs.push({ type: 'success', icon: '', title: 'Strong Scores', text: `Overall ${f.overall_score}%.` });
+            else recs.push({ type: 'info', icon: '', title: 'Average Scores', text: `Overall ${f.overall_score}%.` });
 
-            if (f.total_exam_results === 0) recs.push({ type: 'warning', icon: '📋', title: 'No Exam Data', text: 'Using default values.' });
-            if (f.total_attendance_records < 10) recs.push({ type: 'info', icon: '📆', title: 'Limited Data', text: `Only ${f.total_attendance_records} records.` });
-            if (grade === 'E' || grade === 'F') recs.push({ type: 'warning', icon: '🚨', title: 'Academic Alert', text: 'Student at risk of failing.' });
-            else if (grade === 'A') recs.push({ type: 'success', icon: '🏆', title: 'Top Performer', text: 'Predicted highest grade.' });
+            if (f.total_exam_results === 0) recs.push({ type: 'warning', icon: '', title: 'No Exam Data', text: 'Using default values.' });
+            if (f.total_attendance_records < 10) recs.push({ type: 'info', icon: '', title: 'Limited Data', text: `Only ${f.total_attendance_records} records.` });
+            if (grade === 'E' || grade === 'F') recs.push({ type: 'warning', icon: '', title: 'Academic Alert', text: 'Student at risk of failing.' });
+            else if (grade === 'A') recs.push({ type: 'success', icon: '', title: 'Top Performer', text: 'Predicted highest grade.' });
 
             container.innerHTML = recs.map(r => `<div class="insight-rec insight-rec-${r.type}"><div class="insight-rec-icon">${r.icon}</div><div class="insight-rec-body"><div class="insight-rec-title">${r.title}</div><div class="insight-rec-text">${r.text}</div></div></div>`).join('');
         }

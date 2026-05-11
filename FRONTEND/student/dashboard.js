@@ -1,4 +1,4 @@
-        // ============================================================
+﻿        // ============================================================
         // STATE
         // ============================================================
         let currentUser = null;
@@ -75,7 +75,7 @@
 
                 // Welcome
                 document.getElementById('welcomeMsg').textContent = `Welcome back, ${data.student.first_name}!`;
-                document.getElementById('welcomeSub').textContent = `Grade ${data.student.grade} • ${data.student.faculty} • Roll No: ${data.student.roll_no}`;
+                document.getElementById('welcomeSub').textContent = `Grade ${data.student.grade} | ${data.student.faculty} | Roll No: ${data.student.roll_no}`;
 
                 // Render the academic calendar on the overview page
                 renderCalendar();
@@ -111,8 +111,8 @@
                     <tr>
                         <td>${new Date(r.date).toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' })}</td>
                         <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
-                        <td>${r.remarks || '—'}</td>
-                        <td>${r.recorded_by || '—'}</td>
+                        <td>${r.remarks || '-'}</td>
+                        <td>${r.recorded_by || '-'}</td>
                     </tr>
                 `).join('');
             } catch (e) {
@@ -121,7 +121,7 @@
         }
 
         // ============================================================
-        // ALL RESULTS — Filtered by Exam Type
+        // ALL RESULTS - Filtered by Exam Type
         // ============================================================
         let allResultsCache = [];
         let activeExamType = null;
@@ -196,11 +196,11 @@
 
                 return `
                     <tr class="${!passed ? 'results-row-fail' : ''}">
-                        <td><strong>${r.subject_name || '—'}</strong></td>
-                        <td><span class="record-count">${r.subject_code || '—'}</span></td>
+                        <td><strong>${r.subject_name || '-'}</strong></td>
+                        <td><span class="record-count">${r.subject_code || '-'}</span></td>
                         <td><strong>${r.marks_obtained}</strong></td>
                         <td>${r.full_marks}</td>
-                        <td><span class="badge ${gradeClass}">${r.grade_point || '—'}</span></td>
+                        <td><span class="badge ${gradeClass}">${r.grade_point || '-'}</span></td>
                         <td>${r.percentage}%</td>
                         <td><span class="badge ${statusClass}">${statusText}</span></td>
                     </tr>
@@ -213,9 +213,9 @@
             document.getElementById('rsTotalSubjects').textContent = count;
 
             if (count === 0) {
-                document.getElementById('rsAvgPercentage').textContent = '—';
-                document.getElementById('rsHighestScore').textContent = '—';
-                document.getElementById('rsGPA').textContent = '—';
+                document.getElementById('rsAvgPercentage').textContent = '-';
+                document.getElementById('rsHighestScore').textContent = '-';
+                document.getElementById('rsGPA').textContent = '-';
                 return;
             }
 
@@ -255,26 +255,26 @@
             }
 
             document.getElementById('profileName').textContent = s.full_name;
-            document.getElementById('profileMeta').textContent = `Grade ${s.grade} • ${s.faculty}`;
+            document.getElementById('profileMeta').textContent = `Grade ${s.grade} | ${s.faculty}`;
             document.getElementById('profileRoll').textContent = s.roll_no;
             document.getElementById('profileGrade').textContent = `Grade ${s.grade}`;
             document.getElementById('profileFaculty').textContent = s.faculty;
-            document.getElementById('profilePhone').textContent = s.phone || '—';
-            document.getElementById('profileDob').textContent = s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
-            document.getElementById('profileEnrolled').textContent = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
-            document.getElementById('profileAddress').textContent = s.address || '—';
-            document.getElementById('profileGuardian').textContent = s.guardian_name || '—';
-            document.getElementById('profileGuardianPhone').textContent = s.guardian_phone || '—';
+            document.getElementById('profilePhone').textContent = s.phone || '-';
+            document.getElementById('profileDob').textContent = s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '-';
+            document.getElementById('profileEnrolled').textContent = s.enrolled_date ? new Date(s.enrolled_date).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '-';
+            document.getElementById('profileAddress').textContent = s.address || '-';
+            document.getElementById('profileGuardian').textContent = s.guardian_name || '-';
+            document.getElementById('profileGuardianPhone').textContent = s.guardian_phone || '-';
 
             // Parent details
-            document.getElementById('profileFatherName').textContent = s.father_name || '—';
-            document.getElementById('profileFatherPhone').textContent = s.father_phone || '—';
-            document.getElementById('profileMotherName').textContent = s.mother_name || '—';
-            document.getElementById('profileMotherPhone').textContent = s.mother_phone || '—';
+            document.getElementById('profileFatherName').textContent = s.father_name || '-';
+            document.getElementById('profileFatherPhone').textContent = s.father_phone || '-';
+            document.getElementById('profileMotherName').textContent = s.mother_name || '-';
+            document.getElementById('profileMotherPhone').textContent = s.mother_phone || '-';
 
             // Capitalize parent education nicely
             const edu = s.parent_education;
-            document.getElementById('profileParentEducation').textContent = edu ? edu.replace(/\b\w/g, l => l.toUpperCase()) : '—';
+            document.getElementById('profileParentEducation').textContent = edu ? edu.replace(/\b\w/g, l => l.toUpperCase()) : '-';
         }
 
         // ============================================================
@@ -301,9 +301,9 @@
         let fcCalendar = null;
 
         // Real NEB Academic Calendar & Nepal Public Holidays
-        // Academic Year 2082 BS (Baisakh 2082 – Chaitra 2082) and 2083 BS
+        // Academic Year 2082 BS (Baisakh 2082 - Chaitra 2082) and 2083 BS
         const academicEvents = [
-            // ══════ Nepal Public Holidays 2082 BS (2025-2026 AD) ══════
+            // â-â-â-â-â-â- Nepal Public Holidays 2082 BS (2025-2026 AD) â-â-â-â-â-â-
             { date: '2025-04-14', title: 'Nepali New Year 2082', type: 'holiday' },
             { date: '2025-05-01', title: 'Labour Day', type: 'holiday' },
             { date: '2025-05-12', title: 'Buddha Jayanti', type: 'holiday' },
@@ -336,7 +336,7 @@
 
 
 
-            // ══════ 2083 BS Holidays (Apr 2026 onwards) ══════
+            // â-â-â-â-â-â- 2083 BS Holidays (Apr 2026 onwards) â-â-â-â-â-â-
             { date: '2026-05-01', title: 'Labour Day', type: 'holiday' },
             { date: '2026-05-29', title: 'Republic Day', type: 'holiday' },
         ];
@@ -397,7 +397,7 @@
         }
 
         // ============================================================
-        // ACADEMIC INSIGHT — Performance Prediction (Auto-load)
+        // ACADEMIC INSIGHT - Performance Prediction (Auto-load)
         // ============================================================
         let predictionData = null;
         let insightLoaded = false;
@@ -419,7 +419,7 @@
                 insightLoaded = true;
             } catch (e) {
                 document.getElementById('insightLoading').innerHTML =
-                    '<div class="empty-icon">⚠️</div><p>Failed to generate prediction. Please try again later.</p>';
+                    '<div class="empty-icon"></div><p>Failed to generate prediction. Please try again later.</p>';
             }
         }
 
@@ -450,10 +450,10 @@
 
             // Risk level
             const riskColors = { low: '#10b981', medium: '#f59e0b', high: '#ef4444' };
-            const riskEmojis = { low: '🛡️', medium: '⚠️', high: '🚨' };
+            const riskEmojis = { low: '', medium: '', high: '' };
             document.getElementById('insightRiskLabel').textContent = data.risk_label;
             document.getElementById('insightRiskLabel').style.color = riskColors[data.risk_level];
-            document.getElementById('insightRiskEmoji').textContent = riskEmojis[data.risk_level] || '⚡';
+            document.getElementById('insightRiskEmoji').textContent = riskEmojis[data.risk_level] || '';
             document.getElementById('insightRiskCard').style.borderTopColor = riskColors[data.risk_level];
 
             // Chart
@@ -542,7 +542,7 @@
                             callbacks: {
                                 label: (ctx) => {
                                     const e = examScores[ctx.dataIndex];
-                                    return `${e.marks}/${e.full_marks} (${e.percentage}%) — ${e.exam_type}`;
+                                    return `${e.marks}/${e.full_marks} (${e.percentage}%) - ${e.exam_type}`;
                                 }
                             }
                         }
@@ -598,12 +598,12 @@
         function renderInputFeatures(features) {
             const container = document.getElementById('insightFeaturesGrid');
             const featureCards = [
-                { icon: '📅', label: 'Attendance', value: features.attendance_percentage + '%', sub: `${features.total_attendance_records} days recorded` },
-                { icon: '📝', label: 'Subject Group I', value: features.optional_i_score + '%', sub: 'Average score' },
-                { icon: '📝', label: 'Subject Group II', value: features.optional_ii_score + '%', sub: 'Average score' },
-                { icon: '📝', label: 'Subject Group III', value: features.optional_iii_score + '%', sub: 'Average score' },
-                { icon: '📊', label: 'Overall Score', value: features.overall_score + '%', sub: `${features.total_exam_results} exams averaged` },
-                { icon: '🎓', label: 'Parent Education', value: (features.parent_education || '—').replace(/\b\w/g, l => l.toUpperCase()), sub: 'Socio-academic factor' },
+                { icon: '', label: 'Attendance', value: features.attendance_percentage + '%', sub: `${features.total_attendance_records} days recorded` },
+                { icon: '', label: 'Subject Group I', value: features.optional_i_score + '%', sub: 'Average score' },
+                { icon: '', label: 'Subject Group II', value: features.optional_ii_score + '%', sub: 'Average score' },
+                { icon: '', label: 'Subject Group III', value: features.optional_iii_score + '%', sub: 'Average score' },
+                { icon: '', label: 'Overall Score', value: features.overall_score + '%', sub: `${features.total_exam_results} exams averaged` },
+                { icon: '', label: 'Parent Education', value: (features.parent_education || '-').replace(/\b\w/g, l => l.toUpperCase()), sub: 'Socio-academic factor' },
             ];
 
             container.innerHTML = featureCards.map(f => `
@@ -623,32 +623,32 @@
             const grade = data.predicted_grade;
 
             if (f.attendance_percentage < 75) {
-                recs.push({ type: 'warning', icon: '⚠️', title: 'Improve Attendance', text: `Your attendance is ${f.attendance_percentage}%. Aim for at least 80% to positively impact your grade prediction.` });
+                recs.push({ type: 'warning', icon: '', title: 'Improve Attendance', text: `Your attendance is ${f.attendance_percentage}%. Aim for at least 80% to positively impact your grade prediction.` });
             } else if (f.attendance_percentage >= 90) {
-                recs.push({ type: 'success', icon: '✅', title: 'Great Attendance', text: `Your attendance rate of ${f.attendance_percentage}% is excellent! Keep it up.` });
+                recs.push({ type: 'success', icon: '', title: 'Great Attendance', text: `Your attendance rate of ${f.attendance_percentage}% is excellent! Keep it up.` });
             } else {
-                recs.push({ type: 'info', icon: '📌', title: 'Good Attendance', text: `Your attendance is ${f.attendance_percentage}%. Try to maintain or improve it above 85%.` });
+                recs.push({ type: 'info', icon: '', title: 'Good Attendance', text: `Your attendance is ${f.attendance_percentage}%. Try to maintain or improve it above 85%.` });
             }
 
             if (f.overall_score < 40) {
-                recs.push({ type: 'warning', icon: '📉', title: 'Scores Need Attention', text: `Your overall score average is ${f.overall_score}%. Focus on weaker subjects and seek additional help.` });
+                recs.push({ type: 'warning', icon: '', title: 'Scores Need Attention', text: `Your overall score average is ${f.overall_score}%. Focus on weaker subjects and seek additional help.` });
             } else if (f.overall_score >= 80) {
-                recs.push({ type: 'success', icon: '🌟', title: 'Strong Scores', text: `Your overall score average of ${f.overall_score}% is impressive! Maintain consistency.` });
+                recs.push({ type: 'success', icon: '', title: 'Strong Scores', text: `Your overall score average of ${f.overall_score}% is impressive! Maintain consistency.` });
             } else {
-                recs.push({ type: 'info', icon: '📚', title: 'Room for Growth', text: `Your overall average is ${f.overall_score}%. Practice more and review past exam papers.` });
+                recs.push({ type: 'info', icon: '', title: 'Room for Growth', text: `Your overall average is ${f.overall_score}%. Practice more and review past exam papers.` });
             }
 
             if (f.total_exam_results === 0) {
-                recs.push({ type: 'warning', icon: '📋', title: 'No Exam Data', text: 'No exam results found yet. The prediction uses default values. Results will improve once your exam scores are recorded.' });
+                recs.push({ type: 'warning', icon: '', title: 'No Exam Data', text: 'No exam results found yet. The prediction uses default values. Results will improve once your exam scores are recorded.' });
             }
             if (f.total_attendance_records < 10) {
-                recs.push({ type: 'info', icon: '📆', title: 'Limited Attendance Data', text: `Only ${f.total_attendance_records} attendance records found. Prediction accuracy improves with more data.` });
+                recs.push({ type: 'info', icon: '', title: 'Limited Attendance Data', text: `Only ${f.total_attendance_records} attendance records found. Prediction accuracy improves with more data.` });
             }
 
             if (grade === 'E' || grade === 'F') {
-                recs.push({ type: 'warning', icon: '🚨', title: 'Academic Alert', text: 'Your predicted grade indicates risk of failing. Please meet with your teachers and consider additional tutoring.' });
+                recs.push({ type: 'warning', icon: '', title: 'Academic Alert', text: 'Your predicted grade indicates risk of failing. Please meet with your teachers and consider additional tutoring.' });
             } else if (grade === 'A') {
-                recs.push({ type: 'success', icon: '🏆', title: 'Top Performer', text: 'You are predicted to achieve the highest grade! Continue your excellent study habits.' });
+                recs.push({ type: 'success', icon: '', title: 'Top Performer', text: 'You are predicted to achieve the highest grade! Continue your excellent study habits.' });
             }
 
             container.innerHTML = recs.map(r => `
@@ -660,4 +660,30 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+
+        // ============================================================
+        // PROFILE
+        // ============================================================
+        function loadProfile() {
+            if (!studentData) return;
+            document.getElementById('profileAvatarInit').textContent = studentData.first_name.charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = studentData.first_name + ' ' + studentData.last_name;
+            document.getElementById('profileMeta').textContent = 'Grade ' + studentData.grade + ' - ' + studentData.faculty;
+            document.getElementById('profileEnrolled').textContent = studentData.enrolled_date ? new Date(studentData.enrolled_date).toLocaleDateString() : '';
+            document.getElementById('profileRoll').textContent = studentData.roll_no || '';
+            document.getElementById('profileDob').textContent = studentData.dob || '';
+            document.getElementById('profilePhone').textContent = studentData.contact_number || '';
+            document.getElementById('profileFaculty').textContent = studentData.faculty || '';
+            document.getElementById('profileGrade').textContent = studentData.grade || '';
+            document.getElementById('profileAddress').textContent = studentData.address || '';
+            document.getElementById('profileFatherName').textContent = studentData.father_name || '';
+            document.getElementById('profileFatherPhone').textContent = studentData.father_contact || '';
+            document.getElementById('profileMotherName').textContent = studentData.mother_name || '';
+            document.getElementById('profileMotherPhone').textContent = studentData.mother_contact || '';
+            document.getElementById('profileGuardian').textContent = studentData.guardian_name || '';
+            document.getElementById('profileGuardianPhone').textContent = studentData.guardian_contact || '';
+            let pEdu = studentData.parent_education || '';
+            document.getElementById('profileParentEducation').textContent = pEdu.replace(/\b\w/g, l => l.toUpperCase());
         }
